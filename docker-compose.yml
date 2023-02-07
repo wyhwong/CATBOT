@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mqtt-broker
+    env_file:
+      - .env
+    volumes:
+      - ./mqtt-broker/:/mosquitto/
+    ports:
+      - 1883:1883
