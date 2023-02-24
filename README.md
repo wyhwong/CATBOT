@@ -1,5 +1,7 @@
 # CATBOT - Crypto Auto Trading Bot
-Final project for Big Data Applications and Financial Analytics, Advanced Diploma in FinTech, HKU School of Professional and Continuing Education.
+Final project for FINA4162 Big Data Applications and Financial Analytics, Advanced Diploma in FinTech, HKU School of Professional and Continuing Education.
+
+Keywords: Cryptocurrency, Cloud Application, Data Scraping, Text Classication, and Statistical Analysis
 
 ---
 
@@ -16,6 +18,12 @@ In Development.
 ---
 
 ## Text Scraping and Analysis
+
+In Development.
+
+---
+
+## Slack
 
 In Development.
 
