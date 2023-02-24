@@ -22,4 +22,4 @@ In Development.
 ---
 
 ## Authors
-[@wyhwong](https://github.com/wyhwong), [@KenHo11](https://github.com/KenHo11)
+[@wyhwong](https://github.com/wyhwong), [@KenHo11](https://github.com/KenHo11), [@wayneau1220](https://github.com/wayneau1220)
