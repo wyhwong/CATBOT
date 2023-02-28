@@ -20,3 +20,31 @@ services:
     volumes:
       - ./slackbot/:/app/
       - ./common_utils/:/app/common_utils/
+
+  binance:
+    image: binanceapi
+    hostname: binance
+    container_name: binance
+    env_file:
+      - .env
+    volumes:
+      - ./binance/:/app/
+      - ./common_utils/:/app/common_utils/
+
+  text_analyzer:
+    image: text_analyzer
+    hostname: text_analyzer
+    container_name: text_analyzer
+    env_file:
+      - .env
+    volumes:
+      - ./common_utils/:/app/common_utils/
+
+  stat_analyzer:
+    image: stat_analyzer
+    hostname: stat_analyzer
+    container_name: stat_analyzer
+    env_file:
+      - .env
+    volumes:
+      - ./common_utils/:/app/common_utils/
