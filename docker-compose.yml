@@ -10,3 +10,13 @@ services:
       - ./mqtt-broker/:/mosquitto/
     ports:
       - 1883:1883
+
+  slack:
+    image: slackbot
+    hostname: slackbot
+    container_name: slackbot
+    env_file:
+      - .env
+    volumes:
+      - ./slackbot/:/app/
+      - ./common_utils/:/app/common_utils/

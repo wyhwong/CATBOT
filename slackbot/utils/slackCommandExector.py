@@ -2,8 +2,7 @@ import yaml
 import logging
 from slack_sdk.web import WebClient
 
-from common_utils.common import Message
-from common_utils.mqtt import MQTTMessage, Publisher
+from common_utils.mqtt import Publisher
 
 
 class SlackCommandExector:
@@ -13,25 +12,14 @@ class SlackCommandExector:
         self.topic = "slackbot-pub"
         self.web_client = web_client
         self.status = status
-        self.commands = self._load_command_list()
-
-    def _load_image(self, image: str) -> str:
-        with open("config/image.yml", "r") as file:
-            image = yaml.load(file, Loader=yaml.SafeLoader)[image]
-        return image["title"], image["file"]
-
-    def _load_dialogue(self, dialogue: str) -> str:
-        with open("config/dialogue.yml", "r") as file:
-            return yaml.load(file, Loader=yaml.SafeLoader)[dialogue]
+        self.commands = self._load_command_list().keys()
 
     def _load_command_list(self) -> list:
         with open("config/commands.yml", "r") as file:
-            commands = yaml.load(file, Loader=yaml.SafeLoader)
-        return commands.keys()
+            return yaml.load(file, Loader=yaml.SafeLoader)
 
     def _prepare_help_message(self) -> str:
-        with open("config/commands.yml", "r") as file:
-            commands = yaml.load(file, Loader=yaml.SafeLoader)
+        commands = self._load_command_list()
         message = "Available commands are the following:\n"
         for command, content in commands.items():
             message += f"\t - {command}: {content} \n"
@@ -50,13 +38,10 @@ class SlackCommandExector:
     def help(self, text: str, user: str, channel: str) -> None:
         if text == "help":
             self.logger.info(f"Sending help message, channel: {channel}")
-            message = Message(self._prepare_help_message())
-            mq_msg = MQTTMessage(self.topic, message.to_payload())
-            self.publisher.publish(mq_msg)
-            self._post_message(self._prepare_help_message(), channel)
+            self._post_message(text=self._prepare_help_message(), channel=channel)
         else:
             self.logger.info(f"Invalid command, send ask message, channel: {channel}")
-            self._post_message('Invalid command, do you mean "help"?', channel)
+            self._post_message(text='Invalid command, do you mean "help"?', channel=channel)
 
     def send(self, text: str, user: str, channel: str, dialogue: bool = None) -> None:
         if dialogue:
