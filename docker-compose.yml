@@ -15,6 +15,8 @@ services:
     image: slackbot
     hostname: slackbot
     container_name: slackbot
+    build:
+      context: ./slackbot/
     env_file:
       - .env
     volumes:
@@ -25,6 +27,8 @@ services:
     image: binanceapi
     hostname: binance
     container_name: binance
+    build:
+      context: ./binance/
     env_file:
       - .env
     volumes:
@@ -35,16 +39,10 @@ services:
     image: text_analyzer
     hostname: text_analyzer
     container_name: text_analyzer
+    build:
+      context: ./text_analyzer/
     env_file:
       - .env
     volumes:
-      - ./common_utils/:/app/common_utils/
-
-  stat_analyzer:
-    image: stat_analyzer
-    hostname: stat_analyzer
-    container_name: stat_analyzer
-    env_file:
-      - .env
-    volumes:
+      - ./text_analyzer/:/app/
       - ./common_utils/:/app/common_utils/

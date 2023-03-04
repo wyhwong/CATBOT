@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  slack:
+    command: tail -f /dev/null
+  binance:
+    command: tail -f /dev/null
+  text_analyzer:
+    command: tail -f /dev/null
