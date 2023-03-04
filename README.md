@@ -5,9 +5,25 @@ Keywords: Cryptocurrency, Cloud Application, Data Scraping, Text Classication, a
 
 ---
 
-## Deployment
+## Development
 
-In Development.
+```bash
+# Build Docker images
+make build
+
+# Start containers
+make start
+```
+
+## Deployment (Not Ready Yet)
+
+```bash
+# Build Docker images
+make build
+
+# Start containers
+mode=prod make start
+```
 
 ---
 
@@ -26,6 +42,15 @@ In Development.
 ## Slack
 
 In Development.
+
+---
+
+## Clean up
+
+```bash
+# Remove all containers
+make clean
+```
 
 ---
 
