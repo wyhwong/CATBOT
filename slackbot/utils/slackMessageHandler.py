@@ -21,18 +21,18 @@ class SlackMessageHandler(MessageHandler):
         return False
 
     @overrides
-    def _is_invaild_message(self, message: dict) -> bool:
+    def _is_vaild_message(self, message: dict) -> bool:
         if message["type"] != "message":
             self.logger.info("Input event is not a message, ignored")
-            return True
+            return False
         if message.get("bot_id"):
             self.logger.info("Input event is from bot, ignored")
-            return True
-        return False
+            return False
+        return True
 
     @overrides
     def handle_message(self, message: dict) -> None:
-        if self._is_invaild_message(message):
+        if not self._is_vaild_message(message):
             return
         text, user, channel = message["text"], message["user"], message["channel"]
         if self._is_command(text):

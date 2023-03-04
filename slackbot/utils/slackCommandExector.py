@@ -2,7 +2,7 @@ import yaml
 import logging
 from slack_sdk.web import WebClient
 
-from common_utils.mqtt import Publisher
+from common_utils.mqtt import Publisher, MQTTMessage
 
 
 class SlackCommandExector:
@@ -43,7 +43,10 @@ class SlackCommandExector:
             self.logger.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "help"?', channel=channel)
 
-    def send(self, text: str, user: str, channel: str, dialogue: bool = None) -> None:
-        if dialogue:
-            text = self._load_dialogue(dialogue)
+    def send(self, text: str, user: str, channel: str) -> None:
         self._post_message(text, channel)
+
+    def target(self, text: str, user: str, channel: str) -> None:
+        self.logger.info("Updating targeted cryptocurrencies...")
+        mqtt_message = MQTTMessage.from_str(topic=self.topic, message=text)
+        self.publisher.publish(message=text)
