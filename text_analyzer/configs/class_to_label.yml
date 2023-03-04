@@ -1,0 +1,9 @@
+0:
+  adj: negative
+  weights: -1
+1:
+  adj: neutral
+  weights: 0
+2:
+  adj: positive
+  weights: 1

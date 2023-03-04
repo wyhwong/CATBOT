@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
-from common_utils.logger import getLogger
+from common_utils.logger import get_logger
 
-LOGGER = getLogger("Visualization")
+LOGGER = get_logger("Visualization")
 
 
 def initializePlot(

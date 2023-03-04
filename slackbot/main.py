@@ -1,5 +1,5 @@
+#!/usr/bin/env python3
 import os
-
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.web import WebClient
