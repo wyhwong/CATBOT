@@ -8,6 +8,6 @@ RUN pip3 install paho-mqtt pyyaml overrides seaborn matplotlib python-binance
 
 COPY ../common_utils /app/
 COPY ../common_configs /app/
-COPY ./binance_stats_analyzer /app
+COPY . /app
 
 WORKDIR /app

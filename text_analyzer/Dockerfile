@@ -8,6 +8,6 @@ RUN pip3 install paho-mqtt pyyaml overrides torch transformers requests bs4
 
 COPY ../common_utils /app/
 COPY ../common_configs /app/
-COPY ./text_analyzer /app
+COPY . /app
 
 WORKDIR /app

@@ -8,6 +8,6 @@ RUN pip3 install paho-mqtt pyyaml overrides slack_bolt
 
 COPY ../common_utils /app/
 COPY ../common_configs /app/
-COPY ./slackbot /app
+COPY . /app
 
 WORKDIR /app
