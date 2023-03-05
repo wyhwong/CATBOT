@@ -1,19 +1,18 @@
-import logging
 from overrides import overrides
 from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Subscriber, Publisher
 from common_utils.common import MessageHandler
+from common_utils.logger import get_logger
 from .command_exector import SlackCommandExector
+
+LOGGER = get_logger(logger_name="Utils | Handler")
 
 
 class SlackMessageHandler(MessageHandler):
-    def __init__(
-        self, web_client: WebClient, publisher: Publisher, subscriber: Subscriber, logger: logging.Logger
-    ) -> None:
+    def __init__(self, web_client: WebClient, publisher: Publisher, subscriber: Subscriber) -> None:
         self.subscriber = subscriber
-        self.logger = logger
-        self.commandExector = SlackCommandExector(self.status, web_client, publisher, logger)
+        self.commandExector = SlackCommandExector(self.status, web_client, publisher)
 
     def _is_command(self, text: str) -> bool:
         if text.split(" ")[0].lower() in self.commandExector.commands:
@@ -23,10 +22,10 @@ class SlackMessageHandler(MessageHandler):
     @overrides
     def _is_vaild_message(self, message: dict) -> bool:
         if message["type"] != "message":
-            self.logger.info("Input event is not a message, ignored")
+            LOGGER.info("Input event is not a message, ignored")
             return False
         if message.get("bot_id"):
-            self.logger.info("Input event is from bot, ignored")
+            LOGGER.info("Input event is from bot, ignored")
             return False
         return True
 
@@ -40,6 +39,6 @@ class SlackMessageHandler(MessageHandler):
         if self.status.in_chat:
             self._handle_message_when_in_chat(text, user, channel)
         else:
-            self.logger.info(
+            LOGGER.info(
                 f"Not responding to message: {message['text']}, user: {message['user']}, channel: {message['channel']}"
             )

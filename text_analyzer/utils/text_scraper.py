@@ -15,7 +15,7 @@ class TextScraper:
     def __init__(self) -> None:
         self.web_urls = _get_web_urls()["web_urls"]
 
-    def __call__(self, target):
+    def __call__(self, targets):
         scraped_text = []
         for web_url in self.web_urls:
             page = req.get(web_url)

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from common_utils.logger import get_logger
 
-LOGGER = get_logger("Visualization")
+LOGGER = get_logger("Utils | Visualization")
 
 
 def initializePlot(
