@@ -6,7 +6,7 @@ from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Broker, Subscriber, Publisher
 from common_utils.common import get_logger
-from utils.slackMessageHandler import SlackMessageHandler
+from slackbot.utils.handler import SlackMessageHandler
 
 
 def main():

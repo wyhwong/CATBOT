@@ -3,7 +3,7 @@ import os
 
 from .logger import get_logger
 
-LOGGER = get_logger("Common utils | common")
+LOGGER = get_logger("Common Utils | Common")
 
 def read_content_from_yml(path:str) -> dict:
     LOGGER.info(f"Reading {path}...")

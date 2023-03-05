@@ -4,7 +4,7 @@ from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Subscriber, Publisher
 from common_utils.common import MessageHandler
-from utils.slackCommandExector import SlackCommandExector
+from .command_exector import SlackCommandExector
 
 
 class SlackMessageHandler(MessageHandler):

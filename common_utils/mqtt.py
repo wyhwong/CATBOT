@@ -1,4 +1,5 @@
 import yaml
+import json
 import paho.mqtt.client as mqtt
 from abc import ABC, abstractmethod
 from overrides import overrides
@@ -6,8 +7,11 @@ from overrides import overrides
 from .logger import get_logger
 
 
+LOGGER = get_logger(logger_name="Common Utils | MQTT")
+
+
 def load_broker_config() -> dict:
-    with open("common_config/broker.yml", "r") as file:
+    with open("./common_configs/mqtt_broker.yml", "r") as file:
         return yaml.load(file, Loader=yaml.SafeLoader)
 
 
@@ -28,10 +32,16 @@ class MQTTMessage:
     def from_str(topic: str, message: str):
         return MQTTMessage(topic=topic, payload=bytes(message, "utf8"))
 
+    def decode_payload(self) -> None:
+        if type(self.payload) != bytes:
+            LOGGER.error("The type of input payload is not bytes. Ignored decode.")
+            return
+        content = self.payload.decode("utf-8").replace("'", '"')
+        self.content = json.loads(content)
+
 
 class MQTTClient(ABC):
     def __init__(self, client_id: str, broker: Broker) -> None:
-        self.logger = get_logger(logger_name="MQTT")
         self.client_id = client_id
         self.broker = broker
 
@@ -43,12 +53,12 @@ class MQTTClient(ABC):
 
     def on_connect(self, client, userdata, flags, rc) -> None:
         if rc == 0:
-            self.logger.info("Connected to MQTT Broker.")
+            LOGGER.info("Connected to MQTT Broker.")
         else:
-            self.logger.error("Failed to connect, return code %d\n", rc)
+            LOGGER.error("Failed to connect, return code %d\n", rc)
 
     def on_disconnect(self, client, userdata, rc) -> None:
-        self.logger.info(f"Disconnected MQTT Broker with result code {rc}.")
+        LOGGER.info(f"Disconnected MQTT Broker with result code {rc}.")
 
     @abstractmethod
     def start(self) -> None:
@@ -60,9 +70,10 @@ class MQTTClient(ABC):
 
 
 class Subscriber(MQTTClient):
-    def __init__(self, client_id: str, broker: Broker, topic) -> None:
+    def __init__(self, client_id: str, broker: Broker, topic: str, handlers: list) -> None:
         super().__init__(client_id, broker)
         self.topic = topic
+        self.handlers = handlers
 
     @overrides
     def start(self) -> None:
@@ -77,7 +88,7 @@ class Subscriber(MQTTClient):
 
     def on_message(self, client, userdata, msg) -> None:
         mqtt_msg = MQTTMessage(topic=self.topic, payload=msg.payload)
-        self.logger.debug(f"Received payload: {mqtt_msg.payload} from topic: {mqtt_msg.topic}")
+        LOGGER.debug(f"Received payload: {mqtt_msg.payload} from topic: {mqtt_msg.topic}")
         for handler in self.handlers:
             handler.on_MQTTMessage(mqtt_message=mqtt_msg)
 
@@ -99,6 +110,6 @@ class Publisher(MQTTClient):
     def publish(self, message: MQTTMessage) -> None:
         result = self.client.publish(message.topic, message.payload)
         if result[0] == 0:
-            self.logger.info(f"Successfully sent {message.payload} to topic {message.topic}.")
+            LOGGER.info(f"Successfully sent {message.payload} to topic {message.topic}.")
         else:
-            self.logger.error(f"Failed to send message to topic {message.topic}.")
+            LOGGER.error(f"Failed to send message to topic {message.topic}.")
