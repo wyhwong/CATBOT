@@ -2,7 +2,7 @@ version: "3.8"
 services:
   slack:
     command: python3 main.py
-  binance:
+  binance_stats_analyzer:
     command: python3 main.py
   text_analyzer:
     command: python3 main.py

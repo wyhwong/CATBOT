@@ -9,12 +9,12 @@ services:
     env_file:
       - .env
 
-  binance:
-    image: binanceapi
-    hostname: binance
-    container_name: binance
+  binance_stats_analyzer:
+    image: binance_stats_analyzer
+    hostname: binance_stats_analyzer
+    container_name: binance_stats_analyzer
     build:
-      context: ./binance/
+      context: ./binance_stats_analyzer/
     env_file:
       - .env
 

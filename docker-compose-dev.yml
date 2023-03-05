@@ -6,9 +6,9 @@ services:
       - ./common_utils/:/app/common_utils/
       - ./common_configs/:/app/common_configs/
     command: tail -f /dev/null
-  binance:
+  binance_stats_analyzer:
     volumes:
-      - ./binance/:/app/
+      - ./binance_stats_analyzer/:/app/
       - ./common_utils/:/app/common_utils/
       - ./common_configs/:/app/common_configs/
     command: tail -f /dev/null
