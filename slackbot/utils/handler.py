@@ -36,9 +36,10 @@ class SlackMessageHandler(MessageHandler):
         text, user, channel = message["text"], message["user"], message["channel"]
         if self._is_command(text):
             getattr(self.commandExector, text.split(" ")[0].lower())(text.lower(), user, channel)
-        if self.status.in_chat:
-            self._handle_message_when_in_chat(text, user, channel)
         else:
             LOGGER.info(
                 f"Not responding to message: {message['text']}, user: {message['user']}, channel: {message['channel']}"
             )
+
+    def start_analysis(self) -> None:
+        self.commandExector.analyze(user=None, channel=None)

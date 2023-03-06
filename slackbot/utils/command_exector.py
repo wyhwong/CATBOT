@@ -56,12 +56,38 @@ class SlackCommandExector:
     def target(self, text: str, user: str, channel: str) -> None:
         targets = text.split(" ")[1:]
         if len(targets) == 0:
-            LOGGER.info("Target is not specified, ignored the target command.")
+            message = "Target is not specified, ignored the target command."
+            LOGGER.info(message)
+            self._post_message(text=message, channel=channel)
             return
         LOGGER.info("Updating targeted cryptocurrencies...")
         for target in targets:
             if target not in self.supported_targets:
-                LOGGER.warning("The target is not supported, skipped.")
+                message = "The target is not supported, skipped."
+                LOGGER.warning(message)
+                self._post_message(text=message, channel=channel)
             else:
                 self.targets.append(target)
-        LOGGER.info(f"Targets updated, {self.targets}.")
+                LOGGER.info(f"Added {target} to targets.")
+
+        message = f"Targets updated, {self.targets}."
+        LOGGER.info(message)
+        self._post_message(text=message, channel=channel)
+
+    def analyze(self, text: str, user: str, channel: str):
+        if text == "analyze" and self.taregts:
+            LOGGER.info(f"Starting analysis...")
+            for idx, target in enumerate(self.targets):
+                if idx == 0:
+                    targets_str = target
+                else:
+                    targets_str += f"|{target}"
+            message = {"targets": targets_str}
+            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub",
+                                                message=str(message))
+            self.publisher.publish(message=mqtt_message)
+        elif text == "analyze":
+            LOGGER.info("No target set. Ignored.")
+        else:
+            LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
+            self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)

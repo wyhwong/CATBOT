@@ -20,15 +20,16 @@ class ClassificationInference:
         self.model.to(DEVICE)
         self.labels = _get_class_to_label()
 
-    def __call__(self, prompt: str) -> str:
-        model_input = self.tokenizer(prompt,
-                                     padding=True,
-                                     truncation=True,
-                                     max_length=512,
-                                     return_tensors="pt")
-        model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
-        class_scores = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
-        weighted_score = 0
-        for idx, score in enumerate(class_scores):
-            weighted_score += self.labels[idx]["weights"] * score
-        return weighted_score
+    def __call__(self, prompts: list) -> str:
+        target_score = 0
+        for prompt in prompts:
+            model_input = self.tokenizer(prompt,
+                                        padding=True,
+                                        truncation=True,
+                                        max_length=512,
+                                        return_tensors="pt")
+            model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
+            class_scores = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
+            for idx, score in enumerate(class_scores):
+                target_score += (self.labels[idx]["weights"] * score) / len(prompts)
+        return target_score

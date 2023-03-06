@@ -19,11 +19,17 @@ class Handler:
         self.text_scraper = text_scraper
 
     def on_MQTTMessage(self, mqtt_message) -> None:
-        prompts = self.text_scraper(target=mqtt_message)
-        inference_score = 0
-        for prompt in prompts:
-            inference_score += self.text_inference(prompt=prompt) / len(prompts)
-        mqtt_message = MQTTMessage.from_str(topic="slackbot-sub", message=inference_score)
+        mqtt_message.decode_payload()
+        targets = mqtt_message.content["targets"].split("|")
+        target_prompts = self.text_scraper(targets=targets)
+
+        target_scores = {}
+        for target in targets:
+            prompts = target_prompts[target]
+            target_scores[target]  = self.text_inference(prompts=prompts)
+
+        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub",
+                                            message=str(target_scores))
         self.publisher.publish(message=mqtt_message)
 
 

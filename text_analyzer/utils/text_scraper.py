@@ -1,5 +1,5 @@
-from bs4 import BeautifulSoup
 import requests as req
+from bs4 import BeautifulSoup
 
 from common_utils.logger import get_logger
 from common_utils.common import read_content_from_yml
@@ -13,13 +13,22 @@ def _get_web_urls():
 
 class TextScraper:
     def __init__(self) -> None:
-        self.web_urls = _get_web_urls()["web_urls"]
+        self.web_urls = _get_web_urls()
 
     def __call__(self, targets):
-        scraped_text = []
-        for web_url in self.web_urls:
+        target_prompts = dict.fromkeys(targets, [])
+        for website, web_url in self.web_urls.items():
             page = req.get(web_url)
             content = BeautifulSoup(page.content, "html.parser")
-            for idx, link in enumerate(content.find_all('a')):
-                if(str(type(link.string)) == "<class 'bs4.element.NavigableString'>" and len(link.string) > 35):
-                    print(str(idx)+".", link.string)
+            prompts = getattr(self, f"_scrap_{website}")(content=content)
+            for prompt in prompts:
+                for target in targets:
+                    target_prompts[target].append(prompt) if (target in prompt) else None
+        return target_prompts
+
+    def _scrap_investing(content) -> list:
+        prompts = []
+        for element in content.find_all('a'):
+            title = element.get("title")
+            prompts.append(title) if title else None
+        return prompts
