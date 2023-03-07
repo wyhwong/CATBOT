@@ -1,10 +1,12 @@
 import os
 import logging
 
+FORMAT = "%(asctime)s [%(name)s | %(levelname)s]: %(message)s"
+DATEFMT = "%Y-%m-%d %H:%M:%S"
+logging.basicConfig(format=FORMAT, datefmt=DATEFMT)
+
 
 def get_logger(logger_name: str, log_file_path=None) -> logging.Logger:
-    format = "%(asctime)s [%(name)s | %(levelname)s]: %(message)s"
-    datefmt = "%Y-%m-%d %H:%M:%S"
     logger = logging.getLogger(logger_name)
     level = os.getenv("LOGLEVEL")
     if level is None:
@@ -12,10 +14,9 @@ def get_logger(logger_name: str, log_file_path=None) -> logging.Logger:
         level = 20
     else:
         level = int(level)
+    logger.setLevel(level=level)
+    logger.addHandler(logging.StreamHandler())
     if log_file_path:
-        handlers = [logging.FileHandler(log_file_path), logging.StreamHandler()]
-    else:
-        handlers = [logging.StreamHandler()]
-    logging.basicConfig(level=level, format=format, datefmt=datefmt, handlers=handlers, force=True)
+        logger.addHandler(logging.FileHandler(log_file_path))
     logger.debug(f"Logger started, level={level}")
     return logger

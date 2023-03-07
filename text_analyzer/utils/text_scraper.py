@@ -28,7 +28,7 @@ class TextScraper:
 
     def _scrap_investing(content) -> list:
         prompts = []
-        for element in content.find_all('a'):
+        for element in content.find_all("a"):
             title = element.get("title")
             prompts.append(title) if title else None
         return prompts

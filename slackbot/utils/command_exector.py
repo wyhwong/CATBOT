@@ -83,11 +83,13 @@ class SlackCommandExector:
                 else:
                     targets_str += f"|{target}"
             message = {"targets": targets_str}
-            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub",
-                                                message=str(message))
+            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=str(message))
             self.publisher.publish(message=mqtt_message)
         elif text == "analyze":
             LOGGER.info("No target set. Ignored.")
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
+
+    def visualize(self, text: str, user: str, channel: str):
+        args = text.split(" ")

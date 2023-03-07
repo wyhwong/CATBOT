@@ -23,11 +23,7 @@ class ClassificationInference:
     def __call__(self, prompts: list) -> str:
         target_score = 0
         for prompt in prompts:
-            model_input = self.tokenizer(prompt,
-                                        padding=True,
-                                        truncation=True,
-                                        max_length=512,
-                                        return_tensors="pt")
+            model_input = self.tokenizer(prompt, padding=True, truncation=True, max_length=512, return_tensors="pt")
             model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
             class_scores = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
             for idx, score in enumerate(class_scores):

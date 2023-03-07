@@ -10,10 +10,9 @@ LOGGER = get_logger(logger_name="Main | Text Analyzer")
 
 
 class Handler:
-    def __init__(self,
-                 text_scraper: TextScraper,
-                 text_inference: ClassificationInference,
-                 publisher: Publisher) -> None:
+    def __init__(
+        self, text_scraper: TextScraper, text_inference: ClassificationInference, publisher: Publisher
+    ) -> None:
         self.publisher = publisher
         self.text_inference = text_inference
         self.text_scraper = text_scraper
@@ -26,10 +25,9 @@ class Handler:
         target_scores = {}
         for target in targets:
             prompts = target_prompts[target]
-            target_scores[target]  = self.text_inference(prompts=prompts)
+            target_scores[target] = self.text_inference(prompts=prompts)
 
-        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub",
-                                            message=str(target_scores))
+        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=str(target_scores))
         self.publisher.publish(message=mqtt_message)
 
 
@@ -37,15 +35,9 @@ def main() -> None:
     text_scarper = TextScraper()
     pretrained = os.getenv("TEXT_INFERENCE_PRETRAINED")
     text_inference = ClassificationInference(pretrained=pretrained)
-    publisher = Publisher(client_id="text-analyzer-pub",
-                          broker=Broker())
-    handler = Handler(text_inference=text_inference,
-                      text_scraper=text_scarper,
-                      publisher=publisher)
-    subscriber = Subscriber(client_id="text-analyzer-sub",
-                            broker=Broker(),
-                            topic="slackbot-pub",
-                            handlers=[handler])
+    publisher = Publisher(client_id="text-analyzer-pub", broker=Broker())
+    handler = Handler(text_inference=text_inference, text_scraper=text_scarper, publisher=publisher)
+    subscriber = Subscriber(client_id="text-analyzer-sub", broker=Broker(), topic="slackbot-pub", handlers=[handler])
     subscriber.start()
 
 

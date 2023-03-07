@@ -6,10 +6,7 @@ LOGGER = get_logger(logger_name="Main | Stats Analyzer")
 
 
 class Handler:
-    def __init__(self,
-                 binance_api,
-                 stats_analyzer,
-                 publisher: Publisher) -> None:
+    def __init__(self, binance_api, stats_analyzer, publisher: Publisher) -> None:
         self.publisher = publisher
         self.binance_api = binance_api
         self.stats_analyzer = stats_analyzer
@@ -22,18 +19,12 @@ class Handler:
 
 
 def main() -> None:
-    publisher = Publisher(client_id="stats-analyzer-pub",
-                          broker=Broker())
+    publisher = Publisher(client_id="stats-analyzer-pub", broker=Broker())
     # TODO:
     binance_api = None
     stats_analyzer = None
-    handler = Handler(binance_api=binance_api,
-                      stats_analyzer=stats_analyzer,
-                      publisher=publisher)
-    subscriber = Subscriber(client_id="stats-analyzer-sub",
-                            broker=Broker(),
-                            topic="slackbot-pub",
-                            handlers=[handler])
+    handler = Handler(binance_api=binance_api, stats_analyzer=stats_analyzer, publisher=publisher)
+    subscriber = Subscriber(client_id="stats-analyzer-sub", broker=Broker(), topic="slackbot-pub", handlers=[handler])
     subscriber.start()
 
 

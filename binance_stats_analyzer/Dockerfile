@@ -4,10 +4,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y tzdata python3 python3-pip -y
 RUN pip3 install --upgrade pip
-RUN pip3 install paho-mqtt pyyaml overrides seaborn matplotlib python-binance
+RUN pip3 install paho-mqtt pyyaml overrides seaborn matplotlib python-binance pandas darts mplfinance
 
-COPY ../common_utils /app/
-COPY ../common_configs /app/
-COPY . /app
+# COPY ../common_utils /app/
+# COPY ../common_configs /app/
+# COPY . /app
 
 WORKDIR /app
