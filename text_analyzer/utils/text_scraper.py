@@ -32,3 +32,23 @@ class TextScraper:
             title = element.get("title")
             prompts.append(title) if title else None
         return prompts
+
+    def _scrap_tradingview(content) -> list:
+        prompts = []
+        return prompts
+
+    def _scrap_bloomberg(content) -> list:
+        prompts = []
+        return prompts
+
+    def _scrap_coindesk(content) -> list:
+        prompts = []
+        return prompts
+
+    def _scrap_decrypt(content) -> list:
+        prompts = []
+        return prompts
+
+    def _scrap_decrypt(content) -> list:
+        prompts = []
+        return prompts

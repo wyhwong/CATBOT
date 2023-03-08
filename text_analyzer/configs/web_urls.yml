@@ -1,2 +1,7 @@
 web_urls:
   investing: https://www.investing.com/news/cryptocurrency-news
+  tradingview: https://www.tradingview.com/markets/cryptocurrencies/news/
+  bloomberg: https://www.bloomberg.com/crypto
+  coindesk: https://www.coindesk.com/
+  decrypt: https://decrypt.co/
+  beincrypto: https://beincrypto.com/
