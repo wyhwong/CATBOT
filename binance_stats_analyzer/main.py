@@ -1,25 +1,13 @@
 #!/usr/bin/env python3
 import os
 
+from utils.handler import Handler
 from utils.stats_analyzer import StatisticalAnalyzer
 from utils.binance_client import BinanceClient
 from common_utils.logger import get_logger
-from common_utils.mqtt import Subscriber, Publisher, Broker, MQTTMessage
+from common_utils.mqtt import Subscriber, Publisher, Broker
 
 LOGGER = get_logger(logger_name="Main | Stats Analyzer")
-
-
-class Handler:
-    def __init__(self, binance_api, stats_analyzer, publisher: Publisher) -> None:
-        self.publisher = publisher
-        self.binance_api = binance_api
-        self.stats_analyzer = stats_analyzer
-
-    def on_MQTTMessage(self, mqtt_message) -> None:
-        self.binance_api.query()
-        self.stats_analyzer.analyze()
-        message = MQTTMessage()
-        self.publisher.publish(message=mqtt_message)
 
 
 def main() -> None:
