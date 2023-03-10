@@ -71,3 +71,7 @@ class TextScraper:
     def _scrap_decrypt(content) -> list:
         prompts = []
         return prompts
+
+    def _scrap_coinmarketcap(content) -> list:
+        prompts = []
+        return prompts
