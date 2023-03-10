@@ -25,7 +25,7 @@ def initialize_plot(
 def plot_klines(klines: list, targets: list, output_dir=None, savefig=False, close=True):
     for idx, kline in enumerate(klines):
         LOGGER.info(f"Plotting kine of {targets[idx]}...")
-        _, ax = initialize_plot(nrows=1, ncols=1,height=6, width=10, title=f"{targets[idx]}")
+        _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{targets[idx]}")
         mpf.plot(data=kline, type="candle", show_nontrading=True, ax=ax)
         if savefig:
             if output_dir is None:

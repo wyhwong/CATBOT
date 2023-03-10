@@ -2,7 +2,7 @@ import darts
 from common_utils.common import read_content_from_yml
 from common_utils.logger import get_logger
 
-LOGGER = get_logger(logger_name="Statistical Analyzer")
+LOGGER = get_logger(logger_name="Utils | Statistical Analyzer")
 
 
 def get_analyzer_config():

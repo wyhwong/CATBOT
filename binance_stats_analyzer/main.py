@@ -17,7 +17,9 @@ def main() -> None:
     binance_api = BinanceClient(api_key=binance_api_key, api_secret=binance_api_secret)
     stats_analyzer = StatisticalAnalyzer()
     handler = Handler(binance_api=binance_api, stats_analyzer=stats_analyzer, publisher=publisher)
-    subscriber = Subscriber(client_id="stats-analyzer-sub", broker=Broker(), topic="slackbot-pub", handlers=[handler])
+    subscriber = Subscriber(
+        client_id="stats-analyzer-sub", broker=Broker(), topic="text-analyzer-pub", handlers=[handler]
+    )
     subscriber.start()
 
 

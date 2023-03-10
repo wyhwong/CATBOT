@@ -1,6 +1,9 @@
 from common_utils.mqtt import Publisher, MQTTMessage
+from common_utils.logger import get_logger
 from utils.stats_analyzer import StatisticalAnalyzer
 from utils.binance_client import BinanceClient
+
+LOGGER = get_logger(logger_name="Utils | Handler")
 
 
 class Handler:

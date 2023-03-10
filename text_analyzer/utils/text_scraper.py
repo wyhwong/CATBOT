@@ -11,13 +11,16 @@ LOGGER = get_logger(logger_name="Utils | Text Scraper")
 def _get_web_urls():
     return read_content_from_yml(path="./configs/web_urls.yml")
 
+
 def _get_keywords():
     return read_content_from_yml(path="./configs/keywords.yml")
+
 
 def _does_prompt_contain_keywords(keywords, prompt):
     for keyword in keywords:
         if keyword in prompt:
             return prompt
+
 
 def _dummy_function(any_input):
     return any_input
