@@ -1,5 +1,3 @@
-import yaml
-import logging
 from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Publisher, MQTTMessage
@@ -9,6 +7,14 @@ from common_utils.logger import get_logger
 LOGGER = get_logger(logger_name="Utils | Command Exector")
 
 
+def _load_supported_cryptocurrencies() -> list:
+        return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
+
+
+def _load_command_list() -> list:
+    return read_content_from_yml(path="./configs/commands.yml")
+
+
 class SlackCommandExector:
     def __init__(self, status, web_client: WebClient, publisher: Publisher) -> None:
         self.publisher = publisher
@@ -16,20 +22,15 @@ class SlackCommandExector:
         self.web_client = web_client
         self.status = status
         self.targets = []
-        self.supported_targets = self._load_supported_cryptocurrencies()
-        self.commands = self._load_command_list().keys()
-
-    def _load_supported_cryptocurrencies(self) -> list:
-        return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
-
-    def _load_command_list(self) -> list:
-        return read_content_from_yml(path="./configs/commands.yml")
+        self.supported_targets = _load_supported_cryptocurrencies()
+        self.commands = _load_command_list()
 
     def _prepare_help_message(self) -> str:
-        commands = self._load_command_list()
         message = "Available commands are the following:\n"
-        for command, content in commands.items():
+        for command, content in self.commands.items():
             message += f"\t - {command}: {content} \n"
+        message += "Supported list of cryptocurrencies are the following:\n"
+        message += f"\t {self.supported_targets}"
         return message
 
     def _post_message(self, text: str, channel: str) -> None:
@@ -93,3 +94,6 @@ class SlackCommandExector:
 
     def visualize(self, text: str, user: str, channel: str):
         args = text.split(" ")
+
+    def log(self):
+        pass
