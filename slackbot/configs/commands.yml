@@ -1,0 +1,4 @@
+help: "Show all you can do with CATBOT."
+target: "Target the cryptocurrency for trading."
+set_log: "Set the channel for logging."
+analyze: "Start an text plus statistical analysis on targeted cryptocurrencies."

@@ -1,9 +1,7 @@
-from overrides import overrides
 from slack_sdk.web import WebClient
 from threading import Thread
 
 from common_utils.mqtt import Subscriber, Publisher
-from common_utils.common import MessageHandler
 from common_utils.logger import get_logger
 from .command_exector import SlackCommandExector
 
@@ -19,10 +17,10 @@ class MQTTHandler:
             pass
 
 
-class SlackMessageHandler(MessageHandler):
+class SlackMessageHandler:
     def __init__(self, web_client: WebClient, user_id: str, publisher: Publisher, subscriber: Subscriber) -> None:
         self.user_id = user_id
-        self.commandExector = SlackCommandExector(self.status, web_client, publisher)
+        self.commandExector = SlackCommandExector(web_client, publisher)
         self.subscriber = subscriber
         self.subscriber.handlers.append(MQTTHandler())
         Thread(target=self.subscriber.start, daemon=True).start()
@@ -39,7 +37,6 @@ class SlackMessageHandler(MessageHandler):
         LOGGER.info(f"Received message is not a command: {text}, ignored.")
         return False
 
-    @overrides
     def _is_vaild_message(self, message: dict) -> bool:
         if message["type"] != "message":
             LOGGER.info("Input event is not a message, ignored.")
@@ -49,7 +46,6 @@ class SlackMessageHandler(MessageHandler):
             return False
         return True
 
-    @overrides
     def handle_message(self, message: dict) -> None:
         if not self._is_vaild_message(message):
             return
@@ -64,4 +60,4 @@ class SlackMessageHandler(MessageHandler):
             )
 
     def start_analysis(self) -> None:
-        self.commandExector.analyze(user=None, channel=None)
+        self.commandExector.analyze(text="analyze", user=None, channel=None)

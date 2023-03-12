@@ -8,10 +8,10 @@ from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Broker, Subscriber, Publisher
 from common_utils.common import get_logger
-from slackbot.utils.handler import SlackMessageHandler
+from utils.handler import SlackMessageHandler
 
 LOGGER = get_logger(logger_name="Main | Slackbot")
-
+1
 
 def main():
     LOGGER.info("Initializing slackbot components...")
@@ -28,13 +28,13 @@ def main():
         handler.handle_message(body["event"])
 
     socket_mode_handler = SocketModeHandler(app, os.getenv("SLACK_APP_TOKEN"))
-    Thread(socket_mode_handler.start, daemon=True).start()
+    Thread(target=socket_mode_handler.start, daemon=True).start()
 
     analysis_interval = int(os.getenv("ANALYSIS_INTERVAL_IN_SECOND"))
     while True:
-        LOGGER.info("Initializing new analysis...")
-        handler.start_analysis()
         sleep(analysis_interval)
+        handler.start_analysis()
+        LOGGER.info("Initializing new analysis...")
 
 
 if __name__ == "__main__":

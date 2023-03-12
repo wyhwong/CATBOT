@@ -16,11 +16,11 @@ def _load_command_list() -> list:
 
 
 class SlackCommandExector:
-    def __init__(self, status, web_client: WebClient, publisher: Publisher) -> None:
+    def __init__(self, web_client: WebClient, publisher: Publisher) -> None:
         self.publisher = publisher
         self.topic = "slackbot-pub"
         self.web_client = web_client
-        self.status = status
+        self.log_channel = None
         self.targets = []
         self.supported_targets = _load_supported_cryptocurrencies()
         self.commands = _load_command_list()
@@ -30,7 +30,7 @@ class SlackCommandExector:
         for command, content in self.commands.items():
             message += f"\t - {command}: {content} \n"
         message += "Supported list of cryptocurrencies are the following:\n"
-        message += f"\t {self.supported_targets}"
+        message += f"\t - {self.supported_targets}"
         return message
 
     def _post_message(self, text: str, channel: str) -> None:
@@ -51,39 +51,35 @@ class SlackCommandExector:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "help"?', channel=channel)
 
-    def send(self, text: str, user: str, channel: str) -> None:
-        self._post_message(text, channel)
+    def set_log(self, text: str, user: str, channel: str) -> None:
+        LOGGER.info(f"Set channel for logging: from {self.log_channel} to {channel}...")
+        self.log_channel = channel
 
     def target(self, text: str, user: str, channel: str) -> None:
-        targets = text.split(" ")[1:]
+        targets = text.upper().split(" ")[1:]
         if len(targets) == 0:
             message = "Target is not specified, ignored the target command."
-            LOGGER.info(message)
             self._post_message(text=message, channel=channel)
             return
         LOGGER.info("Updating targeted cryptocurrencies...")
         for target in targets:
             if target not in self.supported_targets:
                 message = "The target is not supported, skipped."
-                LOGGER.warning(message)
                 self._post_message(text=message, channel=channel)
             else:
                 self.targets.append(target)
                 LOGGER.info(f"Added {target} to targets.")
 
         message = f"Targets updated, {self.targets}."
-        LOGGER.info(message)
         self._post_message(text=message, channel=channel)
 
     def analyze(self, text: str, user: str, channel: str):
-        if text == "analyze" and self.taregts:
+        if text == "analyze" and self.targets:
             LOGGER.info(f"Starting analysis...")
-            for idx, target in enumerate(self.targets):
-                if idx == 0:
-                    targets_str = target
-                else:
-                    targets_str += f"|{target}"
-            message = {"targets": targets_str}
+            target_scores = {}
+            for target in self.targets:
+                target_scores[target] = {}
+            message = str(target_scores)
             mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=str(message))
             self.publisher.publish(message=mqtt_message)
         elif text == "analyze":
@@ -92,8 +88,15 @@ class SlackCommandExector:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
 
-    def visualize(self, text: str, user: str, channel: str):
-        args = text.split(" ")
+    def show_last_visuals(self, text: str, user: str, channel: str):
+        for target in self.targets:
+            self._post_image(self,
+                             title=f"{target}_last_visuals",
+                             file=f"/data/{target}_last_vis.png",
+                             channel=channel)
 
-    def log(self):
+    def buy(self, text: str, user: str, channel: str):
+        pass
+
+    def _log(self, mqtt_message):
         pass
