@@ -15,17 +15,26 @@ def _get_class_to_label():
 
 class ClassificationInference:
     def __init__(self, pretrained: str) -> None:
+        LOGGER.info("Initializing text classification inference...")
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained)
         self.model = AutoModelForSequenceClassification.from_pretrained(pretrained)
         self.model.to(DEVICE)
         self.labels = _get_class_to_label()
+        LOGGER.info("Initialized text classification inference.")
 
-    def __call__(self, prompts: list) -> str:
+    def __call__(self, prompt):
+        LOGGER.debug(f"Input: {prompt=}")
+        model_input = self.tokenizer(prompt, padding=True, truncation=True, max_length=512, return_tensors="pt")
+        model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
+        model_output = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
+        LOGGER.debug(f"Output: {model_output=}")
+        return model_output
+
+    def get_score(self, prompts: list) -> str:
+        LOGGER.info(f"Received number of prompts: {len(prompts)}")
         target_score = 0
         for prompt in prompts:
-            model_input = self.tokenizer(prompt, padding=True, truncation=True, max_length=512, return_tensors="pt")
-            model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
-            class_scores = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
+            class_scores = self.__call__(prompt)
             for idx, score in enumerate(class_scores):
                 target_score += (self.labels[idx]["weights"] * score) / len(prompts)
         return target_score

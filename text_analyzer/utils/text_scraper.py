@@ -31,7 +31,7 @@ class TextScraper:
         self.web_urls = _get_web_urls()
         self.keywords = _get_keywords()
 
-    def __call__(self, targets):
+    def scrap(self, targets):
         target_prompts = dict.fromkeys(targets, [])
         prompts = []
         for website, web_url in self.web_urls.items():

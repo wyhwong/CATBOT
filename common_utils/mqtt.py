@@ -5,14 +5,13 @@ from abc import ABC, abstractmethod
 from overrides import overrides
 
 from .logger import get_logger
-
+from .common import read_content_from_yml
 
 LOGGER = get_logger(logger_name="Common Utils | MQTT")
 
 
 def load_broker_config() -> dict:
-    with open("./common_configs/mqtt_broker.yml", "r") as file:
-        return yaml.load(file, Loader=yaml.SafeLoader)
+    return read_content_from_yml(path="./common_configs/mqtt_broker.yml")
 
 
 class Broker:

@@ -13,22 +13,24 @@ class Handler:
     def __init__(
         self, text_scraper: TextScraper, text_inference: ClassificationInference, publisher: Publisher
     ) -> None:
+        LOGGER.info("Initializing handler...")
         self.publisher = publisher
         self.text_inference = text_inference
         self.text_scraper = text_scraper
+        LOGGER.info("Initialized handler.")
 
     def on_MQTTMessage(self, mqtt_message) -> None:
         mqtt_message.decode_payload()
-        targets = mqtt_message.content["targets"].split("|")
-        target_prompts = self.text_scraper(targets=targets)
-
-        target_scores = {}
-        for target in targets:
+        target_scores = mqtt_message.content
+        LOGGER.info(f"Got target scores from MQTT message: {target_scores}")
+        target_prompts = self.text_scraper(targets=target_scores.keys())
+        for target in target_scores.keys():
             prompts = target_prompts[target]
-            target_scores[target] = self.text_inference(prompts=prompts)
-
-        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=str(target_scores))
+            target_scores[target]["text"] = self.text_inference.get_score(prompts=prompts)
+        message = str(target_scores)
+        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
         self.publisher.publish(message=mqtt_message)
+        LOGGER.info("Text analysis done.")
 
 
 def main() -> None:
