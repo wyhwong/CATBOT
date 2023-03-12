@@ -11,7 +11,7 @@ def _load_supported_cryptocurrencies() -> list:
         return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
 
 
-def _load_command_list() -> list:
+def _load_command_list() -> dict:
     return read_content_from_yml(path="./configs/commands.yml")
 
 
@@ -73,7 +73,7 @@ class SlackCommandExector:
         message = f"Targets updated, {self.targets}."
         self._post_message(text=message, channel=channel)
 
-    def analyze(self, text: str, user: str, channel: str):
+    def analyze(self, text: str, user: str, channel: str) -> None:
         if text == "analyze" and self.targets:
             LOGGER.info(f"Starting analysis...")
             target_scores = {}
@@ -88,15 +88,15 @@ class SlackCommandExector:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
 
-    def show_last_visuals(self, text: str, user: str, channel: str):
+    def show_last_visuals(self, text: str, user: str, channel: str) -> None:
         for target in self.targets:
             self._post_image(self,
                              title=f"{target}_last_visuals",
                              file=f"/data/{target}_last_vis.png",
                              channel=channel)
 
-    def buy(self, text: str, user: str, channel: str):
+    def buy(self, text: str, user: str, channel: str) -> None:
         pass
 
-    def _log(self, mqtt_message):
+    def _log(self, mqtt_message: MQTTMessage) -> None:
         pass

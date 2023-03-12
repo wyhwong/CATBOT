@@ -19,7 +19,7 @@ class Handler:
         self.text_scraper = text_scraper
         LOGGER.info("Initialized handler.")
 
-    def on_MQTTMessage(self, mqtt_message) -> None:
+    def on_MQTTMessage(self, mqtt_message: MQTTMessage) -> None:
         mqtt_message.decode_payload()
         target_scores = mqtt_message.content
         LOGGER.info(f"Got target scores from MQTT message: {target_scores}")

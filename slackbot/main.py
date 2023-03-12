@@ -11,7 +11,7 @@ from common_utils.common import get_logger
 from utils.handler import SlackMessageHandler
 
 LOGGER = get_logger(logger_name="Main | Slackbot")
-1
+
 
 def main():
     LOGGER.info("Initializing slackbot components...")

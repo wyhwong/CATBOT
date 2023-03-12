@@ -8,21 +8,21 @@ from common_utils.common import read_content_from_yml
 LOGGER = get_logger(logger_name="Utils | Text Scraper")
 
 
-def _get_web_urls():
+def _get_web_urls() -> dict:
     return read_content_from_yml(path="./configs/web_urls.yml")
 
 
-def _get_keywords():
+def _get_keywords() -> dict:
     return read_content_from_yml(path="./configs/keywords.yml")
 
 
-def _does_prompt_contain_keywords(keywords, prompt):
+def _does_prompt_contain_keywords(keywords: list, prompt: str) -> str:
     for keyword in keywords:
         if keyword in prompt:
             return prompt
 
 
-def _dummy_function(any_input):
+def _dummy_function(any_input: any) -> any:
     return any_input
 
 
@@ -31,7 +31,7 @@ class TextScraper:
         self.web_urls = _get_web_urls()
         self.keywords = _get_keywords()
 
-    def scrap(self, targets):
+    def scrap(self, targets: list) -> list:
         target_prompts = dict.fromkeys(targets, [])
         prompts = []
         for website, web_url in self.web_urls.items():
@@ -73,5 +73,9 @@ class TextScraper:
         return prompts
 
     def _scrap_coinmarketcap(content) -> list:
+        prompts = []
+        return prompts
+
+    def _scrap_cointelegraph(content) -> list:
         prompts = []
         return prompts
