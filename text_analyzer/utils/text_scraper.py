@@ -54,28 +54,56 @@ class TextScraper:
 
     def _scrap_tradingview(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
 
     def _scrap_bloomberg(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.appened(title) if title else None
         return prompts
 
     def _scrap_coindesk(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
 
+    def _scrap_coindesk(content) -> list:
+        prompts = []
+        for element in content.find_all("P"):
+            title = element.get("title")
+            propmts.append(title) if title else None
+        return prompts
+    
     def _scrap_decrypt(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
 
-    def _scrap_decrypt(content) -> list:
+    def _scrap_beincrypto(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
 
     def _scrap_coinmarketcap(content) -> list:
         prompts = []
+        for element in content.find_all("a"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
 
     def _scrap_cointelegraph(content) -> list:
         prompts = []
+        for elements in content.find_all("li"):
+            title = element.get("title")
+            prompts.append(title) if title else None
         return prompts
