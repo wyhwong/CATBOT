@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-from utils.text_scraper import TextScraper
+from text_analyzer.utils.news_scraper import NewsScraper
 from utils.classification_inference import ClassificationInference
 from common_utils.logger import get_logger
 from common_utils.mqtt import Subscriber, Publisher, Broker, MQTTMessage
@@ -11,7 +11,7 @@ LOGGER = get_logger(logger_name="Main | Text Analyzer")
 
 class Handler:
     def __init__(
-        self, text_scraper: TextScraper, text_inference: ClassificationInference, publisher: Publisher
+        self, text_scraper: NewsScraper, text_inference: ClassificationInference, publisher: Publisher
     ) -> None:
         LOGGER.info("Initializing handler...")
         self.publisher = publisher
@@ -23,7 +23,7 @@ class Handler:
         mqtt_message.decode_payload()
         target_scores = mqtt_message.content
         LOGGER.info(f"Got target scores from MQTT message: {target_scores}")
-        target_prompts = self.text_scraper(targets=target_scores.keys())
+        target_prompts = self.text_scraper.scrape(targets=target_scores.keys())
         for target in target_scores.keys():
             prompts = target_prompts[target]
             target_scores[target]["text"] = self.text_inference.get_score(prompts=prompts)
@@ -34,7 +34,7 @@ class Handler:
 
 
 def main() -> None:
-    text_scarper = TextScraper()
+    text_scarper = NewsScraper()
     pretrained = os.getenv("TEXT_INFERENCE_PRETRAINED")
     text_inference = ClassificationInference(pretrained=pretrained)
     publisher = Publisher(client_id="text-analyzer-pub", broker=Broker())

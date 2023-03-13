@@ -1,4 +1,3 @@
-import yaml
 import json
 import paho.mqtt.client as mqtt
 from abc import ABC, abstractmethod
