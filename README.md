@@ -9,6 +9,8 @@ Keywords: Cryptocurrency, Cloud Application, Data Scraping, Text Classication, a
 
 ![plot](./images/pipeline_diagram.jpg)
 
+---
+
 ### Prerequisites
 
 - Docker: [https://www.docker.com/](https://www.docker.com/)
@@ -38,6 +40,17 @@ mode=prod make start
 ```
 
 ---
+
+## Clean up
+
+```bash
+# Remove all containers
+make clean
+```
+
+---
+
+# More Details on Pipeline Components
 
 ## Slack Bot
 
@@ -89,15 +102,6 @@ The statistical analyzer contains the following parts:
 ## MQTT Broker
 
 The MQTT Broker is used for container-to-container communication.
-
----
-
-## Clean up
-
-```bash
-# Remove all containers
-make clean
-```
 
 ---
 
