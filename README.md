@@ -27,7 +27,7 @@ make build
 make start
 ```
 
-## Deployment (Not Ready Yet)
+## Deployment (Work in progress)
 
 ```bash
 # Build Docker images
@@ -103,6 +103,12 @@ The statistical analyzer contains the following parts:
 ## MQTT Broker
 
 The MQTT Broker is used for container-to-container communication.
+
+---
+
+## Presentation Material
+
+Work in progress
 
 ---
 
