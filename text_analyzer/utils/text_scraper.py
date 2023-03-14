@@ -10,7 +10,7 @@ def _get_keywords() -> dict:
 
 def _does_prompt_contain_keywords(keywords: list, prompt: str) -> str:
     for keyword in keywords:
-        if keyword in prompt:
+        if keyword.lower() in prompt.lower():
             return prompt
 
 
