@@ -1,7 +1,5 @@
 # CATBOT - Crypto Auto Trading Bot
-Final project for FINA4162 Big Data Applications and Financial Analytics, Advanced Diploma in FinTech, HKU School of Professional and Continuing Education.
-
-Keywords: Cryptocurrency, Cloud Application, Data Scraping, Text Classication, and Statistical Analysis
+CATBOT is a final capstone project for FINA4162 Big Data Applications and Financial Analytics, Advanced Diploma in FinTech, HKU School of Professional and Continuing Education. CATBOT is a cloud application dedicated to auto cryptocurrency trading powered by primitive text scraping, text classification, and time series analysis. We aim for a lightweight cloud application to get the best cost-performance efficiency.
 
 ---
 
@@ -54,7 +52,7 @@ make clean
 
 ## Slack Bot
 
-The slackbot is responsible to log all analysis results on Slack channels, sending notifications on trades processed. The following commands are supported:
+The Slack bot records all analysis results on Slack channels and sends notifications on trades processed. The following commands are supported:
 
 ```
 help: "Show all you can do with CATBOT."
@@ -63,7 +61,7 @@ set_log: "Set the channel for logging."
 analyze: "Start a text plus statistical analysis on targeted cryptocurrencies."
 ```
 
-Due to the time constraint on development, currently only the following targets are supported:
+Due to the time constraint on development, currently, only the following targets are supported:
 - BTCUSDT
 - ETHUSDT
 - BNBUSDT
@@ -80,7 +78,7 @@ Due to the time constraint on development, currently only the following targets 
 
 ## Text Analyzer
 
-The text analyer contains the following parts:
+The text analyzer contains the following parts:
 
     1. Financial News Scraper, to scrape text contents from financial news websites
     2. Reddit Post Scraper, to scrape Reddit posts
@@ -93,15 +91,30 @@ The text analyer contains the following parts:
 
 The statistical analyzer contains the following parts:
 
-    1. Binance API, to query time series data from Binance.
-    2. Model compose, to analyze queried time series data and forecast the future trend.
-    3. Decider, to do the final decision.
+    1. Binance API, to query time series data from Binance
+    2. Compose of time series models, to analyze queried time series data and forecast the future trend
+        a. StatsforecastAutoARIMA
+        b. LSTM
+        c. LightGBM
+    3. Decider, to compute the final decision
 
 ---
 
 ## MQTT Broker
 
 The MQTT Broker is used for container-to-container communication.
+
+---
+
+## Future Development
+
+In the future, we may update CATBOT with the following changes:
+
+    - Self trained text classifcation model
+    - Better financial news scrapers with Selenium
+    - Self trained time series forecasting model
+    - More time series forecasting algorithms
+    - Multi-platform supports, for example, Discord
 
 ---
 
