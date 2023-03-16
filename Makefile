@@ -4,6 +4,7 @@ mode?=dev
 data_dir?=./data
 
 build:
+	DATA_DIR=${data_dir} \
 	docker-compose build
 
 start:
