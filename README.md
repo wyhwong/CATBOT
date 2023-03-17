@@ -5,7 +5,7 @@ CATBOT is a final capstone project for FINA4162 Big Data Applications and Financ
 
 ## Pipeline Diagram
 
-![plot](./images/pipeline_diagram.jpg)
+![plot](./images/pipeline_diagram.png)
 
 ---
 
