@@ -27,7 +27,7 @@ make build
 make start
 ```
 
-## Deployment (Work in progress)
+## Deployment
 
 ```bash
 # Build Docker images
