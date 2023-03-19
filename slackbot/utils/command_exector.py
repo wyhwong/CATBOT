@@ -30,7 +30,8 @@ class SlackCommandExector:
         for command, content in self.commands.items():
             message += f"\t - {command}: {content} \n"
         message += "Supported list of cryptocurrencies are the following:\n"
-        message += f"\t - {self.supported_targets}"
+        for supported_target in self.supported_targets:
+            message += f"\t - {supported_target} \n"
         return message
 
     def _post_message(self, text: str, channel: str) -> None:
