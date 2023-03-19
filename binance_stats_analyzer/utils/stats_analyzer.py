@@ -29,6 +29,7 @@ class StatisticalAnalyzer:
         if self.forecast and self.last_analysis_date == date_curr:
             return (self.forecast, self.forecast_avg_max, self.forecast_avg_min)
 
+        self.last_analysis_date = date_curr
         forecast, forecast_avg_max, forecast_avg_min = {}, 0., 0.
         for model in self.models:
             model_in_use = getattr(self, f"model_{model}").copy()
