@@ -1,14 +1,21 @@
+import numpy as np
 from abc import ABC, abstractmethod
 from p_tqdm import p_map, t_imap
 
 from common_utils.common import read_content_from_yml
+from common_utils.logger import get_logger
+
+LOGGER = get_logger(logger_name="Utils | Text Scaper")
 
 
 def _get_keywords() -> dict:
     return read_content_from_yml(path="./configs/keywords.yml")
 
 
-def _does_prompt_contain_keywords(keywords: list, prompt: str) -> str:
+def _does_prompt_contain_keywords(prompt: str, keywords: list) -> str:
+    if type(prompt) is not str:
+        LOGGER.info(prompt)
+        return
     for keyword in keywords:
         if keyword.lower() in prompt.lower():
             return prompt
@@ -29,8 +36,10 @@ class TextScraper(ABC):
 
     def _filter_prompts_with_keywords(self, targets: list, prompts: list):
         target_prompts = dict.fromkeys(targets, [])
+        if not prompts:
+            return target_prompts
         for target in targets:
-            keywords = t_imap(_dummy_function, self.keywords[target] * len(prompts))
-            prompts_with_keywords = p_map(_does_prompt_contain_keywords, keywords, prompts)
+            keywords = t_imap(_dummy_function, [self.keywords[target]] * len(prompts))
+            prompts_with_keywords = p_map(_does_prompt_contain_keywords, np.array(object=prompts, dtype=object), keywords)
             target_prompts[target] = list(filter(None, prompts_with_keywords))
         return target_prompts

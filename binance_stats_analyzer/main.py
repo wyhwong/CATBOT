@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 
-from utils.handler import Handler
 from utils.stats_analyzer import StatisticalAnalyzer
 from utils.binance_client import BinanceClient
 from common_utils.logger import get_logger
@@ -20,13 +19,14 @@ class Handler:
         mqtt_message.decode_payload()
         target_scores = mqtt_message.content
         targets = target_scores.keys()
+
         price_dfs = self.binance_api.query(targets=targets)
         for target in targets:
             price_max, price_min, time_series = self.stats_analyzer.transform_price_dataframe(dataframe=price_dfs[target])
             norm_price_curr = (time_series.values()[-1][0] - price_min) / (price_max - price_min)
-            _, norm_price_max_predicts, norm_price_min_predicts = self.stats_analyzer.forecast(time_series=time_series)
+            _, norm_price_max_predicts, norm_price_min_predicts = self.stats_analyzer.forecast_price(time_series=time_series)
             target_scores[target]["stats"] = (norm_price_max_predicts - min(norm_price_curr, norm_price_min_predicts) - norm_price_curr - norm_price_min_predicts) * self.stats_analyzer.score_factor
-        message = str(target_scores)
+        message = str({"command": "log", "scores": target_scores})
         mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=message)
         self.publisher.publish(message=mqtt_message)
 

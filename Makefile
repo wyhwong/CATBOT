@@ -8,8 +8,10 @@ build:
 	docker-compose build
 
 start:
+	@echo "Running in ${mode} mode"
 	DATA_DIR=${data_dir} \
 	docker-compose -f docker-compose.yml -f docker-compose-${mode}.yml up -d
 
 clean:
+	DATA_DIR=${data_dir} \
 	docker-compose -f docker-compose.yml down --remove-orphans

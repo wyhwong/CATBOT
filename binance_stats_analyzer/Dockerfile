@@ -6,10 +6,10 @@ RUN python3 -m pip install --upgrade pip
 RUN pip3 install paho-mqtt pyyaml overrides seaborn matplotlib python-binance pandas darts
 RUN pip3 install --upgrade mplfinance
 
-RUN conda install -c conda-forge ta-lib statsforecast
+RUN conda install -c conda-forge ta-lib
 
-COPY ../common_utils /app/
-COPY ../common_configs /app/
-COPY . /app
+COPY ./binance_stats_analyzer /app
+COPY ./common_utils /app/common_utils
+COPY ./common_configs /app/common_configs
 
 WORKDIR /app

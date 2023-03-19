@@ -95,8 +95,12 @@ class SlackCommandExector:
                              file=f"/data/{target}_last_vis.png",
                              channel=channel)
 
-    def buy(self, text: str, user: str, channel: str) -> None:
-        pass
-
-    def _log(self, mqtt_message: MQTTMessage) -> None:
-        pass
+    def log_scores(self, scores: dict) -> None:
+        LOGGER.info(f"Logging scores to Slack channel: {scores}...")
+        for target in self.targets:
+            message = f"Logging ({target}): "
+            for analyzer, score in scores[target].items():
+                message += f"\t {analyzer}: {score}"
+            LOGGER.info(message)
+            if self.log_channel:
+                self._post_message(text=message, channel=self.log_channel)

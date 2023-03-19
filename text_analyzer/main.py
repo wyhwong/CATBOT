@@ -32,17 +32,18 @@ class Handler:
         target_scores = mqtt_message.content
         targets = target_scores.keys()
         LOGGER.info(f"Got target scores from MQTT message: {target_scores}")
+        target_news_prompts = self.text_scraper.scrape(targets=targets)
         if self.reddit_scraper:
             target_reddit_prompts = self.reddit_scraper.scrape(targets=targets)
         if self.twitter_scraper:
             target_twitter_prompts = self.twitter_scraper.scrape(targets=targets)
-        target_news_prompts = self.text_scraper.scrape(targets=targets)
 
         for target in targets:
-            target_scores[target]["news"] = self.text_inference.get_score(prompts=target_news_prompts[target])
-            if self.reddit_scraper:
+            if target_news_prompts[target]:
+                target_scores[target]["news"] = self.text_inference.get_score(prompts=target_news_prompts[target])
+            if self.reddit_scraper and target_reddit_prompts[target]:
                 target_scores[target]["reddit"] = self.text_inference.get_score(prompts=target_reddit_prompts[target])
-            if self.twitter_scraper:
+            if self.twitter_scraper and target_twitter_prompts[target]:
                 target_scores[target]["twitter"] = self.text_inference.get_score(prompts=target_twitter_prompts[target])
         message = str(target_scores)
         mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
@@ -52,7 +53,7 @@ class Handler:
 
 def main() -> None:
     reddit_client_id = os.getenv("REDDIT_CLIENT_ID")
-    reddit_client_secret = os.getenv("REDDIT_CLIENT_RESECRET")
+    reddit_client_secret = os.getenv("REDDIT_CLIENT_SECRET")
     reddit_user_agent = os.getenv("REDDIT_USER_AGENT")
     if reddit_client_id and reddit_client_secret and reddit_user_agent:
         reddit_scraper = RedditScraper(

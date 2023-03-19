@@ -1,7 +1,6 @@
-web_urls:
-  investing: https://www.investing.com/news/cryptocurrency-news
-  tradingview: https://www.tradingview.com/markets/cryptocurrencies/news/
-  coindesk: https://www.coindesk.com/
-  decrypt: https://decrypt.co/
-  coinmarketcap: https://coinmarketcap.com/headlines/news/
-  nytimes: https://www.nytimes.com/spotlight/cryptocurrency
+investing: https://www.investing.com/news/cryptocurrency-news
+tradingview: https://www.tradingview.com/markets/cryptocurrencies/news/
+coindesk: https://www.coindesk.com/
+decrypt: https://decrypt.co/
+coinmarketcap: https://coinmarketcap.com/headlines/news/
+# nytimes: https://www.nytimes.com/spotlight/cryptocurrency

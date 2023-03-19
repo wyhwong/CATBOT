@@ -9,12 +9,16 @@ LOGGER = get_logger(logger_name="Utils | Handler")
 
 
 class MQTTHandler:
+    def __init__(self, command_exector: SlackCommandExector) -> None:
+        self.command_exector = command_exector
+
     def on_MQTTMessage(self, mqtt_message) -> None:
         mqtt_message.decode_payload()
         command = mqtt_message.content.get("command", None)
-        datatype = mqtt_message.content.get("datatype", None)
-        if mqtt_message.content["command"] == "log":
-            pass
+        if command == "log":
+            scores = mqtt_message.content.get("scores", None)
+            if scores:
+                self.command_exector.log_scores(scores)
 
 
 class SlackMessageHandler:
@@ -22,7 +26,7 @@ class SlackMessageHandler:
         self.user_id = user_id
         self.commandExector = SlackCommandExector(web_client, publisher)
         self.subscriber = subscriber
-        self.subscriber.handlers.append(MQTTHandler())
+        self.subscriber.handlers.append(MQTTHandler(command_exector=self.commandExector))
         Thread(target=self.subscriber.start, daemon=True).start()
 
     def _is_user(self, user_id: str) -> bool:

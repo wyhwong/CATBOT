@@ -5,7 +5,8 @@ services:
     hostname: slackbot
     container_name: slackbot
     build:
-      context: ./slackbot/
+      context: ./
+      dockerfile: ./slackbot/Dockerfile
     volumes:
       - ${DATA_DIR}:/data
     env_file:
@@ -16,7 +17,8 @@ services:
     hostname: binance_stats_analyzer
     container_name: binance_stats_analyzer
     build:
-      context: ./binance_stats_analyzer/
+      context: ./
+      dockerfile: ./binance_stats_analyzer/Dockerfile
     volumes:
       - ${DATA_DIR}:/data
     env_file:
@@ -27,7 +29,8 @@ services:
     hostname: text_analyzer
     container_name: text_analyzer
     build:
-      context: ./text_analyzer/
+      context: ./
+      dockerfile: ./text_analyzer/Dockerfile
     volumes:
       - ${DATA_DIR}:/data
     env_file:

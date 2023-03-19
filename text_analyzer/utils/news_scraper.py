@@ -14,29 +14,40 @@ def _get_news_web_urls() -> dict:
     return read_content_from_yml(path="./configs/web_urls.yml")
 
 
+def _is_str(input) -> bool:
+    if type(input) != str:
+        return False
+    return True
+
+
 class NewsScraper(TextScraper):
     @overrides
     def __init__(self) -> None:
+        LOGGER.info("Initializing news scraper...")
         self.web_urls = _get_news_web_urls()
         self.keywords = _get_keywords()
+        LOGGER.info("Initialized news scraper.")
 
     @overrides
     def scrape(self, targets: list) -> list:
         prompts = []
         for website, web_url in self.web_urls.items():
+            LOGGER.info(f"Scraping {website}: {web_url}...")
             page = req.get(web_url)
             content = BeautifulSoup(page.content, "html.parser")
-            prompts += getattr(self, f"_scrape_{website}")(content=content)
+            scraper_function = getattr(self, f"_scrape_{website}")
+            prompts += scraper_function(content=content)
+            LOGGER.debug(f"Got prompts: {prompts}.")
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
 
-    def _scrape_investing(content) -> list:
+    def _scrape_investing(self, content) -> list:
         prompts = []
         for element in content.find_all("a"):
             title = element.get("title")
             prompts.append(title) if title else None
         return prompts
 
-    def _scrape_tradingview(content) -> list:
+    def _scrape_tradingview(self, content) -> list:
         prompts = []
         for element in content.find_all("a"):
             try:
@@ -44,17 +55,17 @@ class NewsScraper(TextScraper):
             except:
                 title = None
             finally:
-                prompts.append(title) if title else None
+                prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
 
-    def _scrape_coindesk(content) -> list:
+    def _scrape_coindesk(self, content) -> list:
         prompts = []
         for element in content.find_all("a"):
             title = element.get("title")
-            prompts.append(title) if title else None
+            prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
 
-    def _scrape_decrypt(content) -> list:
+    def _scrape_decrypt(self, content) -> list:
         prompts = []
         for element in content.find_all("h4"):
             try:
@@ -62,10 +73,10 @@ class NewsScraper(TextScraper):
             except:
                 title = None
             finally:
-                prompts.append(title) if title else None
+                prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
 
-    def _scrape_coinmarketcap(content) -> list:
+    def _scrape_coinmarketcap(self, content) -> list:
         prompts = []
         for element in content.find_all("a"):
             try:
@@ -73,15 +84,15 @@ class NewsScraper(TextScraper):
             except:
                 title = None
             finally:
-                prompts.append(title) if title else None
+                prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
 
-    def _scrape_nytimes(content) -> list:
+    def _scrape_nytimes(self, content) -> list:
         prompts = []
         for element in content.find_all("h2"):
             try:
                 title = element.contents[-1].contents[-1]
             except:
                 title = None
-            prompts.append(title) if title else None
+            prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
