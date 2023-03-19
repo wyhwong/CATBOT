@@ -1,2 +1,3 @@
-interval: 5m
-duration_in_hrs: 6
+interval: 1d
+duration_in_days: 1825
+score_factor: 10.

@@ -19,9 +19,13 @@ class Handler:
     def on_MQTTMessage(self, mqtt_message: MQTTMessage) -> None:
         mqtt_message.decode_payload()
         target_scores = mqtt_message.content
-        kline_dfs, num_trade_dfs = self.binance_api.query(targets=target_scores.keys())
-        for idx, target in enumerate(target_scores.keys()):
-            target_scores[target]["stat"] = self.stats_analyzer.analyze(kline_df=kline_dfs[idx], num_trade_df=num_trade_dfs[idx])
+        targets = target_scores.keys()
+        price_dfs = self.binance_api.query(targets=targets)
+        for target in targets:
+            price_max, price_min, time_series = self.stats_analyzer.transform_price_dataframe(dataframe=price_dfs[target])
+            norm_price_curr = (time_series.values()[-1][0] - price_min) / (price_max - price_min)
+            _, norm_price_max_predicts, norm_price_min_predicts = self.stats_analyzer.forecast(time_series=time_series)
+            target_scores[target]["stats"] = (norm_price_max_predicts - min(norm_price_curr, norm_price_min_predicts) - norm_price_curr - norm_price_min_predicts) * self.stats_analyzer.score_factor
         message = str(target_scores)
         mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=message)
         self.publisher.publish(message=mqtt_message)
