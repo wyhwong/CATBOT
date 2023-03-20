@@ -26,7 +26,7 @@ class StatisticalAnalyzer:
         self.models = ["LSTM", "AutoARIMA", "LightGBM"]
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = None, None, None
         self.last_analysis_date = None
-        self.score_factor = get_analyzer_config()["score_factor"]
+        self.target_increase = get_analyzer_config()["target_increase"]
 
     def forecast_price(self, time_series: TimeSeries) -> tuple:
         date_curr = pd.Timestamp.now().date()

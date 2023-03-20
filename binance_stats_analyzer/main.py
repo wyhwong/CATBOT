@@ -25,7 +25,9 @@ class Handler:
             price_max, price_min, time_series = self.stats_analyzer.transform_price_dataframe(dataframe=price_dfs[target])
             norm_price_curr = (time_series.values()[-1][0] - price_min) / (price_max - price_min)
             _, norm_price_max_predicts, norm_price_min_predicts = self.stats_analyzer.forecast_price(time_series=time_series)
-            target_scores[target]["stats"] = (norm_price_max_predicts - min(norm_price_curr, norm_price_min_predicts) - norm_price_curr - norm_price_min_predicts) * self.stats_analyzer.score_factor
+            weighting = 100. / self.stats_analyzer.target_increase
+            score_prediction = (norm_price_max_predicts - min(norm_price_curr, norm_price_min_predicts) - norm_price_curr - norm_price_min_predicts) * weighting
+            target_scores[target]["stats"] = min(1, score_prediction)
         message = str({"command": "log", "scores": target_scores})
         mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=message)
         self.publisher.publish(message=mqtt_message)

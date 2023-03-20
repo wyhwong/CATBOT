@@ -117,9 +117,9 @@ class SlackCommandExector:
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")
-        message = f"Logging:\n"
+        message = f"Logging:"
         for target in self.targets:
-            message += f"\t- {target}:"
+            message += f"\n\t- {target}:"
             for analyzer, score in scores[target].items():
                 message += f" {analyzer}: {score:.3f} |"
         LOGGER.info(message)
