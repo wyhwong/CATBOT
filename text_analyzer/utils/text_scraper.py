@@ -21,6 +21,12 @@ def _does_prompt_contain_keywords(prompt: str, keywords: list) -> str:
             return prompt
 
 
+def _is_str(input) -> bool:
+    if type(input) != str:
+        return False
+    return True
+
+
 def _dummy_function(any_input: any) -> any:
     return any_input
 

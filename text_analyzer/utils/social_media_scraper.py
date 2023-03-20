@@ -2,7 +2,7 @@ import praw
 import tweepy
 from overrides import overrides
 
-from .news_scraper import TextScraper, _get_keywords
+from .news_scraper import TextScraper, _get_keywords, _is_str
 from common_utils.logger import get_logger
 from common_utils.common import read_content_from_yml
 
@@ -25,10 +25,15 @@ class RedditScraper(TextScraper):
     @overrides
     def scrape(self, targets: list, hot_post_limit: int = 50) -> list:
         prompts = []
-        for subreddit in self.subreddits:
-            hot_posts = self.reddit_client.subreddit(subreddit).hot(limit=hot_post_limit)
-            for post in hot_posts:
-                prompts.append(post.title)
+        try:
+            for subreddit in self.subreddits:
+                hot_posts = self.reddit_client.subreddit(subreddit).hot(limit=hot_post_limit)
+                for post in hot_posts:
+                    if post.title and _is_str(input=post.title):
+                        prompts.append(post.title)
+        except Exception as err:
+            LOGGER.error(f"Encountered error: {err}")
+            return prompts
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
 
 
@@ -44,10 +49,15 @@ class TwitterScraper(TextScraper):
     @overrides
     def scrape(self, targets: list, post_limit: int = 20) -> list:
         prompts = []
-        for target in targets:
-            tweets = self.twitter.search_tweets(q=self.keywords[target], count=post_limit)
-            for tweet in tweets:
-                prompts.append(tweet.text)
-                # TODO: Use favourite count to weight the tweets
-                # tweet.favorite_count
+        try:
+            for target in targets:
+                tweets = self.twitter.search_tweets(q=self.keywords[target], count=post_limit)
+                for tweet in tweets:
+                    if tweet.text and _is_str(input=tweet.text):
+                        prompts.append(tweet.text)
+                    # TODO: Use favourite count to weight the tweets
+                    # tweet.favorite_count
+        except Exception as err:
+            LOGGER.error(f"Encountered error: {err}")
+            return prompts
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)

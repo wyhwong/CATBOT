@@ -55,6 +55,13 @@ class SlackCommandExector:
     def set_log(self, text: str, user: str, channel: str) -> None:
         LOGGER.info(f"Set channel for logging: from {self.log_channel} to {channel}...")
         self.log_channel = channel
+        self._post_message(text="Set this channel for logging.", channel=channel)
+
+    def unset_log(self, text: str, user: str, channel: str) -> None:
+        LOGGER.info(f"Unset channel for logging: {self.log_channel=}...")
+        if text == "unset" and channel == self.log_channel:
+            self.log_channel = None
+            self._post_message(text="Unset this channel for logging.", channel=channel)
 
     def target(self, text: str, user: str, channel: str) -> None:
         targets = text.upper().split(" ")[1:]
@@ -65,11 +72,23 @@ class SlackCommandExector:
         LOGGER.info("Updating targeted cryptocurrencies...")
         for target in targets:
             if target not in self.supported_targets:
-                message = "The target is not supported, skipped."
+                message = f"The target ({target}) is not supported, skipped."
                 self._post_message(text=message, channel=channel)
             else:
                 self.targets.append(target)
                 LOGGER.info(f"Added {target} to targets.")
+
+        message = f"Targets updated, {self.targets}."
+        self._post_message(text=message, channel=channel)
+
+    def untarget(self, text: str, user: str, channel: str) -> None:
+        untargets = text.upper().split(" ")[1:]
+        for untarget in untargets:
+            if untarget in self.targets:
+                self.targets.remove(untarget)
+            else:
+                message = f"The untarget ({untarget}) is in self.targets, skipped."
+                self._post_message(text=message, channel=channel)
 
         message = f"Targets updated, {self.targets}."
         self._post_message(text=message, channel=channel)
@@ -98,10 +117,11 @@ class SlackCommandExector:
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")
+        message = f"Logging:\n"
         for target in self.targets:
-            message = f"Logging ({target}): "
+            message += f"\t- {target}:"
             for analyzer, score in scores[target].items():
-                message += f"\t {analyzer}: {score:.3f}"
-            LOGGER.info(message)
-            if self.log_channel:
-                self._post_message(text=message, channel=self.log_channel)
+                message += f" {analyzer}: {score:.3f} |"
+        LOGGER.info(message)
+        if self.log_channel:
+            self._post_message(text=message, channel=self.log_channel)

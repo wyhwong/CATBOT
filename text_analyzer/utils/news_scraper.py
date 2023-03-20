@@ -4,7 +4,7 @@ from overrides import overrides
 
 from common_utils.logger import get_logger
 from common_utils.common import read_content_from_yml
-from .text_scraper import TextScraper, _get_keywords
+from .text_scraper import TextScraper, _get_keywords, _is_str
 
 
 LOGGER = get_logger(logger_name="Utils | News Scraper")
@@ -12,12 +12,6 @@ LOGGER = get_logger(logger_name="Utils | News Scraper")
 
 def _get_news_web_urls() -> dict:
     return read_content_from_yml(path="./configs/web_urls.yml")
-
-
-def _is_str(input) -> bool:
-    if type(input) != str:
-        return False
-    return True
 
 
 class NewsScraper(TextScraper):
@@ -33,8 +27,12 @@ class NewsScraper(TextScraper):
         prompts = []
         for website, web_url in self.web_urls.items():
             LOGGER.info(f"Scraping {website}: {web_url}...")
-            page = req.get(web_url)
-            content = BeautifulSoup(page.content, "html.parser")
+            try:
+                page = req.get(web_url)
+                content = BeautifulSoup(page.content, "html.parser")
+            except Exception as err:
+                LOGGER.error(f"Encountered error: {err}")
+                continue
             scraper_function = getattr(self, f"_scrape_{website}")
             prompts += scraper_function(content=content)
             LOGGER.debug(f"Got prompts: {prompts}.")
@@ -44,7 +42,7 @@ class NewsScraper(TextScraper):
         prompts = []
         for element in content.find_all("a"):
             title = element.get("title")
-            prompts.append(title) if title else None
+            prompts.append(title) if (title and _is_str(input=title)) else None
         return prompts
 
     def _scrape_tradingview(self, content) -> list:

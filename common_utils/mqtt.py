@@ -42,13 +42,11 @@ class MQTTMessage:
 class MQTTClient(ABC):
     def __init__(self, client_id: str, broker: Broker) -> None:
         self.client_id = client_id
-        self.broker = broker
-
         self.client = mqtt.Client(client_id=client_id)
         self.client.on_connect = self.on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.username_pw_set(broker.username, broker.password)
-        self.client.connect(broker.host, broker.port)
+        self.client.connect(host=broker.host, port=broker.port, keepalive=3600)
 
     def on_connect(self, client, userdata, flags, rc) -> None:
         if rc == 0:
@@ -78,7 +76,7 @@ class Subscriber(MQTTClient):
     def start(self) -> None:
         self.client.subscribe(self.topic)
         self.client.on_message = self.on_message
-        self.client.loop_forever(timeout=360)
+        self.client.loop_forever()
 
     @overrides
     def stop(self) -> None:

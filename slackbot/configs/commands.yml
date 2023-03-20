@@ -1,4 +1,6 @@
 help: "Show all you can do with CATBOT."
 target: "Target the cryptocurrency for trading."
+untarget: "Untarget the cryptocurrency for trading."
 set_log: "Set the channel for logging."
+unset_log: "Unset the channel for logging."
 analyze: "Start a text plus statistical analysis on targeted cryptocurrencies."
