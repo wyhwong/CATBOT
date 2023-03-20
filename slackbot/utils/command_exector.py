@@ -101,7 +101,7 @@ class SlackCommandExector:
         for target in self.targets:
             message = f"Logging ({target}): "
             for analyzer, score in scores[target].items():
-                message += f"\t {analyzer}: {score}"
+                message += f"\t {analyzer}: {score:.3f}"
             LOGGER.info(message)
             if self.log_channel:
                 self._post_message(text=message, channel=self.log_channel)

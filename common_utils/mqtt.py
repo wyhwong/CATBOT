@@ -36,6 +36,7 @@ class MQTTMessage:
             return
         content = self.payload.decode("utf-8").replace("'", '"')
         self.content = json.loads(content)
+        LOGGER.info(f"Decoded payloads, {content=}")
 
 
 class MQTTClient(ABC):
@@ -77,7 +78,7 @@ class Subscriber(MQTTClient):
     def start(self) -> None:
         self.client.subscribe(self.topic)
         self.client.on_message = self.on_message
-        self.client.loop_forever()
+        self.client.loop_forever(timeout=360)
 
     @overrides
     def stop(self) -> None:

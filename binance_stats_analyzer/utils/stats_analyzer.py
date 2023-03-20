@@ -31,6 +31,7 @@ class StatisticalAnalyzer:
     def forecast_price(self, time_series: TimeSeries) -> tuple:
         date_curr = pd.Timestamp.now().date()
         if self.forecast and self.last_analysis_date == date_curr:
+            LOGGER.info("Prediction exists, read from cached data.")
             return (self.forecast, self.forecast_avg_max, self.forecast_avg_min)
 
         self.last_analysis_date = date_curr
@@ -39,8 +40,11 @@ class StatisticalAnalyzer:
             model_in_use = deepcopy(getattr(self, f"model_{model}"))
             model_in_use.fit(series=time_series)
             forecast[model] = model_in_use.predict(n=30)
-            forecast_avg_max += forecast[model].values().max() / len(self.models)
-            forecast_avg_min += forecast[model].values().min() / len(self.models)
+            model_forecast_avg_max = forecast[model].values().max()
+            forecast_avg_max += model_forecast_avg_max / len(self.models)
+            model_forecast_avg_min = forecast[model].values().min()
+            forecast_avg_min += model_forecast_avg_min / len(self.models)
+            LOGGER.info(f"Predicted by {model}, max in 30 days: {model_forecast_avg_max}, min in 30 days: {model_forecast_avg_min}")
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = forecast, forecast_avg_max, forecast_avg_min
         return (forecast, forecast_avg_max, forecast_avg_min)
 
