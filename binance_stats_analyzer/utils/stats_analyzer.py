@@ -22,16 +22,16 @@ class StatisticalAnalyzer:
         self.model_LightGBM = RNNModel(input_chunk_length=30, model="LSTM", batch_size=16, n_epochs=50)
         self.models = ["LSTM", "AutoARIMA", "LightGBM"]
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = {}, {}, {}
-        self.last_analysis_date = None
+        self.last_analysis_date = {}
         self.target_increase = get_analyzer_config()["target_increase"]
 
     def forecast_price(self, target, time_series: TimeSeries) -> tuple:
         date_curr = pd.Timestamp.now().date()
-        if self.forecast.get(target) and self.last_analysis_date == date_curr:
+        if self.forecast.get(target) and self.last_analysis_date.get(target) == date_curr:
             LOGGER.info("Prediction exists, read from cached data.")
             return (self.forecast.get(target), self.forecast_avg_max.get(target), self.forecast_avg_min.get(target))
 
-        self.last_analysis_date = date_curr
+        self.last_analysis_date[target] = date_curr
         forecast, forecast_avg_max, forecast_avg_min = {}, 0.0, 0.0
         for model in self.models:
             model_in_use = deepcopy(getattr(self, f"model_{model}"))
