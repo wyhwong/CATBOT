@@ -17,10 +17,23 @@ class BinanceClient:
         LOGGER.info("Initialized Binance client...")
 
     def _get_historical_data(self, symbol: str, start_str: str, interval: str):
-        dataframe = pd.DataFrame(self.client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_str)).astype(float)
-        dataframe.columns = ["OpenTime", "Open", "High", "Low", "Close", "Volume", "CloseTime",
-                             "QuoteAssetVolume", "NumberOfTrades", "TakerBuyBaseAssetVolume",
-                             "TakerBuyQuoteAssetVolume", "Ignore"]
+        dataframe = pd.DataFrame(
+            self.client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_str)
+        ).astype(float)
+        dataframe.columns = [
+            "OpenTime",
+            "Open",
+            "High",
+            "Low",
+            "Close",
+            "Volume",
+            "CloseTime",
+            "QuoteAssetVolume",
+            "NumberOfTrades",
+            "TakerBuyBaseAssetVolume",
+            "TakerBuyQuoteAssetVolume",
+            "Ignore",
+        ]
         dataframe = dataframe.drop(columns="Ignore")
         dataframe["OpenTime"] = pd.to_datetime(dataframe["OpenTime"], unit="ms")
         dataframe["CloseTime"] = pd.to_datetime(dataframe["CloseTime"], unit="ms")

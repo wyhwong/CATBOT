@@ -20,7 +20,9 @@ def main():
     web_client = WebClient(token=os.getenv("SLACK_TOKEN"), logger=LOGGER)
     subscriber = Subscriber(client_id="slackbot-sub", broker=Broker(), topic="stats-analyzer-pub", handlers=[])
     publisher = Publisher(client_id="slackbot-pub", broker=Broker())
-    handler = SlackMessageHandler(web_client=web_client, user_id=slack_user_id, publisher=publisher, subscriber=subscriber)
+    handler = SlackMessageHandler(
+        web_client=web_client, user_id=slack_user_id, publisher=publisher, subscriber=subscriber
+    )
     LOGGER.info("Initialized slack components.")
 
     @app.event("message")

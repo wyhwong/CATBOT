@@ -46,6 +46,8 @@ class TextScraper(ABC):
             return target_prompts
         for target in targets:
             keywords = t_imap(_dummy_function, [self.keywords[target]] * len(prompts))
-            prompts_with_keywords = p_map(_does_prompt_contain_keywords, np.array(object=prompts, dtype=object), keywords)
+            prompts_with_keywords = p_map(
+                _does_prompt_contain_keywords, np.array(object=prompts, dtype=object), keywords
+            )
             target_prompts[target] = list(filter(None, prompts_with_keywords))
         return target_prompts

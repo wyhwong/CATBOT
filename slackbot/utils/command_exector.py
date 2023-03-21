@@ -8,7 +8,7 @@ LOGGER = get_logger(logger_name="Utils | Command Exector")
 
 
 def _load_supported_cryptocurrencies() -> list:
-        return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
+    return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
 
 
 def _load_command_list() -> dict:
@@ -110,10 +110,7 @@ class SlackCommandExector:
 
     def show_last_visuals(self, text: str, user: str, channel: str) -> None:
         for target in self.targets:
-            self._post_image(self,
-                             title=f"{target}_last_visuals",
-                             file=f"/data/{target}_last_vis.png",
-                             channel=channel)
+            self._post_image(self, title=f"{target}_last_visuals", file=f"/data/{target}_last_vis.png", channel=channel)
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")
