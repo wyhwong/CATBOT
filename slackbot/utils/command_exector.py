@@ -99,7 +99,7 @@ class SlackCommandExector:
             target_scores = {}
             for target in self.targets:
                 target_scores[target] = {}
-            message = str(target_scores)
+            message = str({"scores": target_scores})
             mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=str(message))
             self.publisher.publish(message=mqtt_message)
         elif text == "analyze":
