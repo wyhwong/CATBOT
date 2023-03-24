@@ -140,9 +140,29 @@ class SlackCommandExector:
         mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
         self.publisher.publish(message=mqtt_message)
 
-    def show_last_visuals(self, text: str, user: str, channel: str) -> None:
-        for target in self.targets:
-            self._post_attachment(self, title=f"{target}_last_visuals", file=f"/data/{target}_last_vis.png", channel=channel)
+    def s_show_klines(self, text: str, user: str, channel: str) -> None:
+        args = text.split(" ")[1:]
+        if len(args) != 3:
+            message = "Wrong command format, please check help."
+            return
+        target, duration, interval = args
+        message = None
+        if type(target) != str:
+            message = "Type of target should be str."
+        try:
+            float(duration), float(interval)
+        except ValueError:
+            message = "Type of duration and interval should be float."
+        finally:
+            if message:
+                self._post_message(text=message, channel=channel)
+            else:
+                message = str({"scommand": "show_klines",
+                               "args": {"target": target,
+                                        "duration": duration,
+                                        "interval": interval}})
+                mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
+                self.publisher.publish(message=mqtt_message)
 
     def post(self, command_args: dict) -> None:
         posttype = command_args.get("type", None)

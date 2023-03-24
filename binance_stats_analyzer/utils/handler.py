@@ -66,5 +66,5 @@ class Handler:
             interval=command_args["interval"],
         )
         plot_klines(klines=klines, target=target, output_dir="/data", savefig=True)
-        message = str({"command": "post", "type": "png", "path": f"/data/{target}_klines.png"})
+        message = str({"command": "post", "args": {"type": "png", "path": f"/data/{target}_klines.png"}})
         self.publish_message(message=message)

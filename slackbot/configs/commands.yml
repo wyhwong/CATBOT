@@ -6,5 +6,5 @@ set_log: 'Set the channel for logging, format: "set_log"'
 unset_log: 'Unset the channel for logging, format: "unset_log"'
 analyze: 'Start a text plus statistical analysis on targeted cryptocurrencies, format: "analyze"'
 t_analyze: 'Start text analysis on a set of keywords, format: "t_analyze [keyword_1] [keyword_2] ..."'
-s_show_klines: '(Not ready) Show the klines of targeted coin, format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"'
+s_show_klines: 'Show the klines of targeted coin, format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"'
 s_show_last_predict: "(Not ready)"
