@@ -40,7 +40,7 @@ class NewsScraper(TextScraper):
         if keywords:
             for prompt in reversed(prompts):
                 for keyword in keywords:
-                    if keyword in prompt:
+                    if keyword not in prompt:
                         prompts.remove(prompt)
         return prompts
 
