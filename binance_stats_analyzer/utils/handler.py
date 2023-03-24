@@ -56,11 +56,12 @@ class Handler:
 
     def show_klines(self, command_args: dict):
         target = command_args["target"]
+        duration = float(command_args["duration"])
         LOGGER.info(f"Visualizing klines for {target}...")
         klines = self.binance_api.get_klines(
             self,
             target=target,
-            start_str=(pd.Timestamp.now() - pd.Timedelta(hours=command_args["duration"])).strftime(
+            start_str=(pd.Timestamp.now() - pd.Timedelta(hours=duration)).strftime(
                 "%Y-%m-%d' %H:%M:%S"
             ),
             interval=command_args["interval"],
