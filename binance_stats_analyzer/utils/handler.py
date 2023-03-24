@@ -1,5 +1,8 @@
+import pandas as pd
+
 from .stats_analyzer import StatisticalAnalyzer
 from .binance_client import BinanceClient
+from .visualization import plot_klines
 from common_utils.logger import get_logger
 from common_utils.mqtt import Publisher, MQTTMessage
 
@@ -24,6 +27,10 @@ class Handler:
             mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=str(content))
             self.publisher.publish(message=mqtt_message)
 
+    def publish_message(self, message: str) -> None:
+        mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=message)
+        self.publisher.publish(message=mqtt_message)
+
     def analyze(self, target_scores: dict) -> None:
         targets = target_scores.keys()
         price_dfs = self.binance_api.query(targets=targets)
@@ -43,6 +50,21 @@ class Handler:
                 - norm_price_min_predicts
             ) * weighting
             target_scores[target]["stats"] = min(1, score_prediction)
+            target_scores[target]["stats"] = max(-1, score_prediction)
         message = str({"command": "log", "scores": target_scores})
-        mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=message)
-        self.publisher.publish(message=mqtt_message)
+        self.publish_message(message)
+
+    def show_klines(self, command_args: dict):
+        target = command_args["target"]
+        LOGGER.info(f"Visualizing klines for {target}...")
+        klines = self.binance_api.get_klines(
+            self,
+            target=target,
+            start_str=(pd.Timestamp.now() - pd.Timedelta(hours=command_args["duration"])).strftime(
+                "%Y-%m-%d' %H:%M:%S"
+            ),
+            interval=command_args["interval"],
+        )
+        plot_klines(klines=klines, target=target, output_dir="/data", savefig=True)
+        message = str({"command": "post", "path": f"/data/{target}_klines.png"})
+        self.publish_message(message)

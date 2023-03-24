@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import mplfinance as mpf
+import pandas as pd
 
 from common_utils.logger import get_logger
 
@@ -22,19 +23,18 @@ def initialize_plot(
     return fig, axes
 
 
-def plot_klines(klines: list, targets: list, output_dir=None, savefig=False, close=True):
-    for idx, kline in enumerate(klines):
-        LOGGER.info(f"Plotting kine of {targets[idx]}...")
-        _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{targets[idx]}")
-        mpf.plot(data=kline, type="candle", show_nontrading=True, ax=ax)
-        if savefig:
-            if output_dir is None:
-                raise ValueError("outputDir must not be empty if savefig is True.")
-            savepath = f"{output_dir}/{targets[idx]}_kline.png"
-            LOGGER.debug(f"Saving plot at {savepath}.")
-            plt.savefig(savepath, facecolor="w")
-            LOGGER.info(f"Saved plot at {savepath}.")
-        if close:
-            LOGGER.debug(f"Closed plot.")
-            plt.close()
-        LOGGER.info(f"Plotted kine of {targets[idx]}.")
+def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, savefig=False, close=True):
+    LOGGER.info(f"Plotting kine of {target}...")
+    _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{target}")
+    mpf.plot(data=klines, type="candle", show_nontrading=True, ax=ax)
+    if savefig:
+        if output_dir is None:
+            raise ValueError("outputDir must not be empty if savefig is True.")
+        savepath = f"{output_dir}/{target}_klines.png"
+        LOGGER.debug(f"Saving plot at {savepath}.")
+        plt.savefig(savepath, facecolor="w")
+        LOGGER.info(f"Saved plot at {savepath}.")
+    if close:
+        LOGGER.debug(f"Closed plot.")
+        plt.close()
+    LOGGER.info(f"Plotted kine of {target}.")
