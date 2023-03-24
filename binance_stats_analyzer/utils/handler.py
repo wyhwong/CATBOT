@@ -59,8 +59,7 @@ class Handler:
         duration = float(command_args["duration"])
         LOGGER.info(f"Visualizing klines for {target}...")
         klines = self.binance_api.get_klines(
-            self,
-            target=target,
+            symbol=target,
             start_str=(pd.Timestamp.now() - pd.Timedelta(hours=duration)).strftime(
                 "%Y-%m-%d' %H:%M:%S"
             ),
