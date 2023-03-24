@@ -45,11 +45,11 @@ class Handler:
             target_twitter_prompts = self.twitter_scraper.scrape(targets=targets)
 
         for target in targets:
-            if target_news_prompts[target]:
+            if target_news_prompts.get(target, None):
                 target_scores[target]["news"] = self.text_inference.get_score(prompts=target_news_prompts[target])
-            if self.reddit_scraper and target_reddit_prompts[target]:
+            if self.reddit_scraper and target_reddit_prompts.get(target, None):
                 target_scores[target]["reddit"] = self.text_inference.get_score(prompts=target_reddit_prompts[target])
-            if self.twitter_scraper and target_twitter_prompts[target]:
+            if self.twitter_scraper and target_twitter_prompts.get(target, None):
                 target_scores[target]["twitter"] = self.text_inference.get_score(prompts=target_twitter_prompts[target])
         message = str(target_scores)
         mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
