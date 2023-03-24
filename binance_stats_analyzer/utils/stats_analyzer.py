@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from copy import deepcopy
 from darts import TimeSeries
 from darts.models.forecasting.auto_arima import AutoARIMA
@@ -25,7 +26,7 @@ class StatisticalAnalyzer:
         self.last_analysis_date = {}
         self.target_increase = get_analyzer_config()["target_increase"]
 
-    def forecast_price(self, target, time_series: TimeSeries) -> tuple:
+    def forecast_price(self, target, time_series: TimeSeries, price_max: float, price_min: float) -> tuple:
         date_curr = pd.Timestamp.now().date()
         if self.forecast.get(target) and self.last_analysis_date.get(target) == date_curr:
             LOGGER.info("Prediction exists, read from cached data.")
@@ -36,11 +37,12 @@ class StatisticalAnalyzer:
         for model in self.models:
             model_in_use = deepcopy(getattr(self, f"model_{model}"))
             model_in_use.fit(series=time_series)
-            forecast[model] = model_in_use.predict(n=30)
-            model_forecast_avg_max = forecast[model].values().max()
+            forecast[model] = model_in_use.predict(n=30).values()
+            model_forecast_avg_max = forecast[model].max()
             forecast_avg_max += model_forecast_avg_max / len(self.models)
-            model_forecast_avg_min = forecast[model].values().min()
+            model_forecast_avg_min = forecast[model].min()
             forecast_avg_min += model_forecast_avg_min / len(self.models)
+            forecast[model] = np.hstack(forecast[model]) * (price_max - price_min) + price_min
             LOGGER.info(
                 f"Predicted by {model}, max in 30 days: {model_forecast_avg_max}, min in 30 days: {model_forecast_avg_min}"
             )

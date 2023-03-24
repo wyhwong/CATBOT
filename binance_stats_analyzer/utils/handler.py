@@ -20,7 +20,7 @@ class Handler:
         mqtt_message.decode_payload()
         content = mqtt_message.content
         if content.get("scores"):
-            self.analyze(target_scores=content)
+            self.analyze(target_scores=content["scores"])
         elif content.get("scommand"):
             getattr(self, content["scommand"])(content=content)
         else:
@@ -40,7 +40,7 @@ class Handler:
             )
             norm_price_curr = (time_series.values()[-1][0] - price_min) / (price_max - price_min)
             _, norm_price_max_predicts, norm_price_min_predicts = self.stats_analyzer.forecast_price(
-                target=target, time_series=time_series
+                target=target, time_series=time_series, price_max=price_max, price_min=price_min
             )
             weighting = 100.0 / self.stats_analyzer.target_increase
             score_prediction = (

@@ -1,3 +1,5 @@
+import pandas as pd
+
 from .news_scraper import NewsScraper
 from .social_media_scraper import RedditScraper, TwitterScraper
 from .classification_inference import ClassificationInference
@@ -27,13 +29,12 @@ class Handler:
     def on_MQTTMessage(self, mqtt_message: MQTTMessage) -> None:
         mqtt_message.decode_payload()
         content = mqtt_message.content
-        if content.get("scores"):
-            self.analyze(target_scores=content)
-        elif content.get("tcommand"):
-            getattr(self, content["tcommand"])(content=content)
+        if content.get("scores", None):
+            self.analyze(target_scores=content["scores"])
+        elif content.get("tcommand", None):
+            getattr(self, content["tcommand"])(command_args=content["args"])
         else:
-            mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=str(content))
-            self.publisher.publish(message=mqtt_message)
+            self._publish_message(message=str(content))
 
     def _publish_message(self, message: str) -> None:
         mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
@@ -42,23 +43,39 @@ class Handler:
     def analyze(self, target_scores: dict) -> None:
         targets = target_scores.keys()
         LOGGER.info(f"Got target scores from MQTT message: {target_scores}")
-        target_news_prompts = self.text_scraper.scrape(targets=targets)
+        target_news_prompts = self.text_scraper.scrape_targets(targets=targets)
         if self.reddit_scraper:
-            target_reddit_prompts = self.reddit_scraper.scrape(targets=targets)
+            target_reddit_prompts = self.reddit_scraper.scrape_targets(targets=targets)
         if self.twitter_scraper:
-            target_twitter_prompts = self.twitter_scraper.scrape(targets=targets)
+            target_twitter_prompts = self.twitter_scraper.scrape_targets(targets=targets)
 
         for target in targets:
             if target_news_prompts.get(target, None):
-                target_scores[target]["news"] = self.text_inference.get_score(prompts=target_news_prompts[target])
+                target_scores[target]["news"] = self.text_inference.get_scores(prompts=target_news_prompts[target])
             if self.reddit_scraper and target_reddit_prompts.get(target, None):
-                target_scores[target]["reddit"] = self.text_inference.get_score(prompts=target_reddit_prompts[target])
+                target_scores[target]["reddit"] = self.text_inference.get_scores(prompts=target_reddit_prompts[target])
             if self.twitter_scraper and target_twitter_prompts.get(target, None):
-                target_scores[target]["twitter"] = self.text_inference.get_score(prompts=target_twitter_prompts[target])
+                target_scores[target]["twitter"] = self.text_inference.get_scores(prompts=target_twitter_prompts[target])
         message = str(target_scores)
         self._publish_message(message=message)
         LOGGER.info("Text analysis done.")
 
-    def keyword_analyze(self, command_args: dict):
-        message = str({"command": "post", "type": "csv", "path": f"/data/{command_args['keyword']}.csv"})
-        self.publish_message(message=message)
+    def keywords_analysis(self, command_args: dict):
+        results = []
+        news_prompts = self.text_scraper.scrape(keywords=command_args["keywords"])
+        for prompt in news_prompts:
+            results.append([self.text_inference.get_score(prompt=prompt), "news", prompt])
+
+        if self.reddit_scraper:
+            reddit_prompts = self.reddit_scraper.scrape(keywords=command_args["keywords"])
+            for prompt in reddit_prompts:
+                results.append([self.text_inference.get_score(prompt=prompt), "reddit", prompt])
+
+        if self.twitter_scraper:
+            twitter_prompts = self.twitter_scraper.scrape(keywords=command_args["keywords"])
+            for prompt in twitter_prompts:
+                results.append([self.text_inference.get_score(prompt=prompt), "tweet", prompt])
+
+        pd.DataFrame(results, columns=["Score", "Type", "Content"]).to_csv("/data/t_analysis.csv", index=None)
+        message = str({"command": "post", "args": {"type": "csv", "path": "/data/t_analysis.csv"}})
+        self._publish_message(message=message)

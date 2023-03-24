@@ -30,7 +30,14 @@ class ClassificationInference:
         LOGGER.debug(f"Output: {model_output=}")
         return model_output
 
-    def get_score(self, prompts: list) -> str:
+    def get_score(self, prompt: str) -> float:
+        target_score = 0
+        class_scores = self.__call__(prompt)
+        for idx, score in enumerate(class_scores):
+            target_score += (self.labels[idx]["weights"] * score)
+        return target_score
+
+    def get_scores(self, prompts: list) -> float:
         LOGGER.info(f"Received number of prompts: {len(prompts)}")
         target_score = 0
         for prompt in prompts:

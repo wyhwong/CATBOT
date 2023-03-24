@@ -36,7 +36,7 @@ class RedditScraper(TextScraper):
             return prompts
 
         if keywords:
-            for prompt in prompts.reverse():
+            for prompt in reversed(prompts):
                 for keyword in keywords:
                     if keyword in prompt:
                         prompts.remove(prompt)

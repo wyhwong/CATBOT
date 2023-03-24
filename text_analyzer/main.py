@@ -25,9 +25,9 @@ def main() -> None:
         reddit_scraper = None
 
     tweepy_consumer_key = os.getenv("TWEEPY_CONSUMER_KEY")
-    tweepy_consumer_secret = os.getenv("TWEEPY_CONSUMER_KEY")
-    tweepy_access_token = os.getenv("TWEEPY_CONSUMER_KEY")
-    tweepy_access_token_secret = os.getenv("TWEEPY_CONSUMER_KEY")
+    tweepy_consumer_secret = os.getenv("TWEEPY_CONSUMER_SECRET")
+    tweepy_access_token = os.getenv("TWEEPY_ACCESS_TOKEN")
+    tweepy_access_token_secret = os.getenv("TWEEPY_ACCESS_TOKEN_SECRET")
     if tweepy_consumer_key and tweepy_consumer_secret and tweepy_access_token and tweepy_access_token_secret:
         twitter_scraper = TwitterScraper(
             consumer_key=tweepy_consumer_key,

@@ -19,6 +19,8 @@ class MQTTHandler:
             scores = mqtt_message.content.get("scores", None)
             if scores:
                 self.command_exector.log_scores(scores)
+        if command == "post":
+            self.command_exector.post(command_args=mqtt_message.content["args"])
 
 
 class SlackMessageHandler:

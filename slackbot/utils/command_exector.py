@@ -26,16 +26,18 @@ class SlackCommandExector:
         self.log_channel = None
         self.targets = []
         self.last_analysis_time = None
-        analysis_waittime = os.getenv("ANALYSIS_WAITTIME", 0.0)
+        analysis_waittime = float(os.getenv("ANALYSIS_WAITTIME", 0.0))
         self.analysis_waittime = pd.Timedelta(seconds=analysis_waittime)
         self.supported_targets = _load_supported_cryptocurrencies()
         self.commands = _load_command_list()
 
     def wait_if_after_analysis(self) -> None:
         if self.last_analysis_time:
-            if pd.Timestamp.now() - self.last_analysis_time < self.analysis_waittime:
-                LOGGER.info("Just after analysis, sleep...")
-                sleep(secs=self.analysis_waittime.total_seconds)
+            analysis_aftertime = pd.Timestamp.now() - self.last_analysis_time
+            if analysis_aftertime < self.analysis_waittime:
+                timediff_in_secs = (self.analysis_waittime - analysis_aftertime).total_seconds()
+                LOGGER.info(f"Just after analysis, sleep for {timediff_in_secs} secs...")
+                sleep(timediff_in_secs)
 
     def _prepare_help_message(self) -> str:
         message = "Available commands are the following:\n"
@@ -51,10 +53,10 @@ class SlackCommandExector:
         sent_message = self.web_client.chat_postMessage(channel=channel, text=text)["ok"]
         LOGGER.info(f"Successfully sent message: {sent_message}")
 
-    def _post_image(self, title: str, file: str, channel: str) -> None:
-        LOGGER.info(f"Sending image to Slack, channel: {channel}, file: {file}")
-        sent_image = self.web_client.files_upload_v2(title=title, file=file, channel=channel)
-        LOGGER.info(f"Successfully sent image: {sent_image}")
+    def _post_attachment(self, title: str, file: str, channel: str) -> None:
+        LOGGER.info(f"Sending attachment to Slack, channel: {channel}, file: {file}")
+        sent_attachment = self.web_client.files_upload_v2(title=title, file=file, channel=channel)
+        LOGGER.info(f"Successfully sent attachment: {sent_attachment}")
 
     def help(self, text: str, user: str, channel: str) -> None:
         if text == "help":
@@ -86,12 +88,24 @@ class SlackCommandExector:
             if target not in self.supported_targets:
                 message = f"The target ({target}) is not supported, skipped."
                 self._post_message(text=message, channel=channel)
+            elif target in self.targets:
+                message = f"The target ({target}) is already in targets, skipped."
             else:
                 self.targets.append(target)
                 LOGGER.info(f"Added {target} to targets.")
-
         message = f"Targets updated, {self.targets}."
         self._post_message(text=message, channel=channel)
+
+    def list_targets(self, text: str, user: str, channel: str) -> None:
+        if text == "list_targets" and self.targets:
+            message = f"Current targets: {self.targets}"
+            self._post_message(text=message, channel=channel)
+        elif text == "list_targets":
+            message = "Currently there are no targets."
+            self._post_message(text=message, channel=channel)
+        else:
+            LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
+            self._post_message(text='Invalid command, do you mean "list_targets"?', channel=channel)
 
     def untarget(self, text: str, user: str, channel: str) -> None:
         untargets = text.upper().split(" ")[1:]
@@ -99,29 +113,43 @@ class SlackCommandExector:
             if untarget in self.targets:
                 self.targets.remove(untarget)
             else:
-                message = f"The untarget ({untarget}) is in self.targets, skipped."
+                message = f"The untarget ({untarget}) is not in self.targets, skipped."
                 self._post_message(text=message, channel=channel)
 
         message = f"Targets updated, {self.targets}."
         self._post_message(text=message, channel=channel)
 
     def analyze(self, text: str, user: str, channel: str) -> None:
-        if text == "analyze" and self.targets:
+        if text == "analyze":
             LOGGER.info(f"Starting analysis...")
             target_scores = {}
             for target in self.targets:
                 target_scores[target] = {}
             message = str({"scores": target_scores})
-            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=str(message))
+            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
             self.publisher.publish(message=mqtt_message)
             self.last_analysis_time = pd.Timestamp.now()
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
 
+    def t_analyze(self, text: str, user: str, channel: str) -> None:
+        keywords = text.split(" ")[1:]
+        LOGGER.info(f"Starting text analysis for {keywords=}")
+        message = str({"tcommand": "keywords_analysis", "args": {"keywords": keywords}})
+        mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
+        self.publisher.publish(message=mqtt_message)
+
     def show_last_visuals(self, text: str, user: str, channel: str) -> None:
         for target in self.targets:
-            self._post_image(self, title=f"{target}_last_visuals", file=f"/data/{target}_last_vis.png", channel=channel)
+            self._post_attachment(self, title=f"{target}_last_visuals", file=f"/data/{target}_last_vis.png", channel=channel)
+
+    def post(self, command_args: dict) -> None:
+        posttype = command_args.get("type", None)
+        if posttype in ["csv", "png"]:
+            self._post_attachment(title="User requested analysis results",
+                                  file=command_args.get("path", None),
+                                  channel=self.log_channel)
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")

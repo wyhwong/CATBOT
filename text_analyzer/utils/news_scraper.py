@@ -38,7 +38,7 @@ class NewsScraper(TextScraper):
             LOGGER.debug(f"Got prompts: {prompts}.")
 
         if keywords:
-            for prompt in prompts.reverse():
+            for prompt in reversed(prompts):
                 for keyword in keywords:
                     if keyword in prompt:
                         prompts.remove(prompt)

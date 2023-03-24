@@ -5,7 +5,7 @@ from utils.handler import Handler
 from utils.stats_analyzer import StatisticalAnalyzer
 from utils.binance_client import BinanceClient
 from common_utils.logger import get_logger
-from common_utils.mqtt import Subscriber, Publisher, Broker, MQTTMessage
+from common_utils.mqtt import Subscriber, Publisher, Broker
 
 LOGGER = get_logger(logger_name="Main | Statistical Analyzer")
 
@@ -20,7 +20,11 @@ def main() -> None:
     subscriber = Subscriber(
         client_id="stats-analyzer-sub", broker=Broker(), topic="text-analyzer-pub", handlers=[handler]
     )
-    subscriber.start()
+    # subscriber.start()
+
+    from common_utils.mqtt import MQTTMessage
+    msg = MQTTMessage.from_str(topic="text-analyzer-pub", message=str({"scores": {"BTCUSDT": {}}}))
+    handler.on_MQTTMessage(mqtt_message=msg)
 
 
 if __name__ == "__main__":
