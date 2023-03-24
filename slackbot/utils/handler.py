@@ -57,6 +57,7 @@ class SlackMessageHandler:
         if not self._is_user(user):
             return
         if self._is_command(text):
+            self.commandExector.wait_if_after_analysis()
             getattr(self.commandExector, text.split(" ")[0].lower())(text.lower(), user, channel)
         else:
             LOGGER.info(

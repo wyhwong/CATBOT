@@ -1,3 +1,6 @@
+import os
+import pandas as pd
+from time import sleep
 from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Publisher, MQTTMessage
@@ -22,8 +25,17 @@ class SlackCommandExector:
         self.web_client = web_client
         self.log_channel = None
         self.targets = []
+        self.last_analysis_time = None
+        analysis_waittime = os.getenv("ANALYSIS_WAITTIME", 0.0)
+        self.analysis_waittime = pd.Timedelta(seconds=analysis_waittime)
         self.supported_targets = _load_supported_cryptocurrencies()
         self.commands = _load_command_list()
+
+    def wait_if_after_analysis(self) -> None:
+        if self.last_analysis_time:
+            if pd.Timestamp.now() - self.last_analysis_time < self.analysis_waittime:
+                LOGGER.info("Just after analysis, sleep...")
+                sleep(secs=self.analysis_waittime.total_seconds)
 
     def _prepare_help_message(self) -> str:
         message = "Available commands are the following:\n"
@@ -102,8 +114,7 @@ class SlackCommandExector:
             message = str({"scores": target_scores})
             mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=str(message))
             self.publisher.publish(message=mqtt_message)
-        elif text == "analyze":
-            LOGGER.info("No target set. Ignored.")
+            self.last_analysis_time = pd.Timestamp.now()
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
