@@ -98,7 +98,7 @@ class SlackCommandExector:
 
     def list_targets(self, text: str, user: str, channel: str) -> None:
         if text == "list_targets" and self.targets:
-            message = f"Current targets: {self.targets}"
+            message = f"Current targets: {self.targets}."
             self._post_message(text=message, channel=channel)
         elif text == "list_targets":
             message = "Currently there are no targets."

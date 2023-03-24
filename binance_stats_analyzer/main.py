@@ -20,11 +20,7 @@ def main() -> None:
     subscriber = Subscriber(
         client_id="stats-analyzer-sub", broker=Broker(), topic="text-analyzer-pub", handlers=[handler]
     )
-    # subscriber.start()
-
-    from common_utils.mqtt import MQTTMessage
-    msg = MQTTMessage.from_str(topic="text-analyzer-pub", message=str({"scores": {"BTCUSDT": {}}}))
-    handler.on_MQTTMessage(mqtt_message=msg)
+    subscriber.start()
 
 
 if __name__ == "__main__":
