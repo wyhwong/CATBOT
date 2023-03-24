@@ -41,6 +41,7 @@ class BinanceClient:
 
     def get_klines(self, symbol: str, start_str: str, interval: str) -> pd.DataFrame:
         dataframe = self._get_historical_data(symbol=symbol, start_str=start_str, interval=interval)
+        dataframe = dataframe.set_index("OpenTime", drop=False)
         return dataframe[["OpenTime", "Open", "High", "Low", "Close", "Volume"]]
 
     def get_number_of_trade(self, symbol: str, start_str: str, interval: str) -> pd.DataFrame:
