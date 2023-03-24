@@ -134,6 +134,10 @@ class SlackCommandExector:
             self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
 
     def t_analyze(self, text: str, user: str, channel: str) -> None:
+        if not self.log_channel:
+            LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
+            self.log_channel = channel
+            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
         keywords = text.split(" ")[1:]
         LOGGER.info(f"Starting text analysis for {keywords=}")
         message = str({"tcommand": "keywords_analysis", "args": {"keywords": keywords}})
@@ -147,12 +151,12 @@ class SlackCommandExector:
             return
         target, duration, interval = args
         message = None
-        if type(target) != str:
-            message = "Type of target should be str."
+        if interval not in ["1m", "5m", "1d"]:
+            message = 'Please use interval in ["1m", "5m", "1d"]'
         try:
-            float(duration), float(interval)
+            float(duration)
         except ValueError:
-            message = "Type of duration and interval should be float."
+            message = "Type of duration should be float."
         finally:
             if message:
                 self._post_message(text=message, channel=channel)
