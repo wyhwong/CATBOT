@@ -37,7 +37,11 @@ class TextScraper(ABC):
         self.keywords = _get_keywords()
 
     @abstractmethod
-    def scrape(self, targets: list) -> list:
+    def scrape(self, keywords: list) -> list:
+        pass
+
+    @abstractmethod
+    def scrape_targets(self, targets: list) -> list:
         pass
 
     def _filter_prompts_with_keywords(self, targets: list, prompts: list):

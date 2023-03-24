@@ -35,6 +35,10 @@ class Handler:
             mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=str(content))
             self.publisher.publish(message=mqtt_message)
 
+    def _publish_message(self, message: str) -> None:
+        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
+        self.publisher.publish(message=mqtt_message)
+
     def analyze(self, target_scores: dict) -> None:
         targets = target_scores.keys()
         LOGGER.info(f"Got target scores from MQTT message: {target_scores}")
@@ -52,6 +56,9 @@ class Handler:
             if self.twitter_scraper and target_twitter_prompts.get(target, None):
                 target_scores[target]["twitter"] = self.text_inference.get_score(prompts=target_twitter_prompts[target])
         message = str(target_scores)
-        mqtt_message = MQTTMessage.from_str(topic="text-analyzer-pub", message=message)
-        self.publisher.publish(message=mqtt_message)
+        self._publish_message(message=message)
         LOGGER.info("Text analysis done.")
+
+    def keyword_analyze(self, command_args: dict):
+        message = str({"command": "post", "type": "csv", "path": f"/data/{command_args['keyword']}.csv"})
+        self.publish_message(message=message)

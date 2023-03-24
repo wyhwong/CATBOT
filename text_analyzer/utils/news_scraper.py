@@ -23,7 +23,7 @@ class NewsScraper(TextScraper):
         LOGGER.info("Initialized news scraper.")
 
     @overrides
-    def scrape(self, targets: list) -> list:
+    def scrape(self, keywords: list = None) -> list:
         prompts = []
         for website, web_url in self.web_urls.items():
             LOGGER.info(f"Scraping {website}: {web_url}...")
@@ -36,6 +36,17 @@ class NewsScraper(TextScraper):
             scraper_function = getattr(self, f"_scrape_{website}")
             prompts += scraper_function(content=content)
             LOGGER.debug(f"Got prompts: {prompts}.")
+
+        if keywords:
+            for prompt in prompts.reverse():
+                for keyword in keywords:
+                    if keyword in prompt:
+                        prompts.remove(prompt)
+        return prompts
+
+    @overrides
+    def scrape_targets(self, targets: list) -> list:
+        prompts = self.scrape(keywords=None)
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
 
     def _scrape_investing(self, content) -> list:

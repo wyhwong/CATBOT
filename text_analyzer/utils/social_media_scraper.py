@@ -23,7 +23,7 @@ class RedditScraper(TextScraper):
         LOGGER.info("Initialized Reddit Scraper.")
 
     @overrides
-    def scrape(self, targets: list, hot_post_limit: int = 50) -> list:
+    def scrape(self, keywords: list = None, hot_post_limit: int = 50) -> list:
         prompts = []
         try:
             for subreddit in self.subreddits:
@@ -34,6 +34,17 @@ class RedditScraper(TextScraper):
         except Exception as err:
             LOGGER.error(f"Encountered error: {err}")
             return prompts
+
+        if keywords:
+            for prompt in prompts.reverse():
+                for keyword in keywords:
+                    if keyword in prompt:
+                        prompts.remove(prompt)
+        return prompts
+
+    @overrides
+    def scrape_targets(self, targets: list, hot_post_limit: int = 50) -> list:
+        prompts = self.scrape(keywords=None, hot_post_limit=hot_post_limit)
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
 
 
@@ -47,17 +58,23 @@ class TwitterScraper(TextScraper):
         LOGGER.info("Initialized Twitter Scraper.")
 
     @overrides
-    def scrape(self, targets: list, post_limit: int = 20) -> list:
+    def scrape(self, keywords, post_limit: int = 20) -> list:
         prompts = []
         try:
-            for target in targets:
-                tweets = self.twitter.search_tweets(q=self.keywords[target], count=post_limit)
-                for tweet in tweets:
-                    if tweet.text and _is_str(input=tweet.text):
-                        prompts.append(tweet.text)
-                    # TODO: Use favourite count to weight the tweets
-                    # tweet.favorite_count
+            tweets = self.twitter.search_tweets(q=keywords, count=post_limit)
+            for tweet in tweets:
+                if tweet.text and _is_str(input=tweet.text):
+                    prompts.append(tweet.text)
+                # TODO: Use favourite count to weight the tweets
+                # tweet.favorite_count
         except Exception as err:
             LOGGER.error(f"Encountered error: {err}")
             return prompts
+        return prompts
+
+    @overrides
+    def scrape_targets(self, targets: list, post_limit: int = 20) -> list:
+        prompts = []
+        for target in targets:
+            prompts += self.scrape(keywords=self.keywords[target], post_limit=post_limit)
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
