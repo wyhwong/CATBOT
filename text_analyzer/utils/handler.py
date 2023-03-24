@@ -56,7 +56,7 @@ class Handler:
                 target_scores[target]["reddit"] = self.text_inference.get_scores(prompts=target_reddit_prompts[target])
             if self.twitter_scraper and target_twitter_prompts.get(target, None):
                 target_scores[target]["twitter"] = self.text_inference.get_scores(prompts=target_twitter_prompts[target])
-        message = str(target_scores)
+        message = str({"scores": target_scores})
         self._publish_message(message=message)
         LOGGER.info("Text analysis done.")
 
