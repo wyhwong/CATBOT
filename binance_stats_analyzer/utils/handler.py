@@ -22,7 +22,7 @@ class Handler:
         if content.get("scores"):
             self.analyze(target_scores=content["scores"])
         elif content.get("scommand"):
-            getattr(self, content["scommand"])(content=content)
+            getattr(self, content["scommand"])(content=content["args"])
         else:
             mqtt_message = MQTTMessage.from_str(topic="stats-analyzer-pub", message=str(content))
             self.publisher.publish(message=mqtt_message)
