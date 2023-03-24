@@ -145,6 +145,10 @@ class SlackCommandExector:
         self.publisher.publish(message=mqtt_message)
 
     def s_show_klines(self, text: str, user: str, channel: str) -> None:
+        if not self.log_channel:
+            LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
+            self.log_channel = channel
+            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
         args = text.split(" ")[1:]
         if len(args) != 3:
             message = "Wrong command format, please check help."
