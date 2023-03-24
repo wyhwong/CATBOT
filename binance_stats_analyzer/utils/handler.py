@@ -55,7 +55,7 @@ class Handler:
         self.publish_message(message)
 
     def show_klines(self, command_args: dict):
-        target = command_args["target"]
+        target = command_args["target"].upper()
         duration = float(command_args["duration"])
         LOGGER.info(f"Visualizing klines for {target}...")
         klines = self.binance_api.get_klines(
