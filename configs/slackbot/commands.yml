@@ -44,7 +44,7 @@ t_analyze:
 s_show_klines:
   description: "Show the klines of targeted coin"
   format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"
-  example: "s_show_klines BTCUSDT 24 15m"
+  example: "s_show_klines BTCUSDT 24 5m"
   require_privilege: false
 
 s_show_last_predict:

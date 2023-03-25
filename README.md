@@ -17,6 +17,13 @@ CATBOT is a final capstone project for FINA4162 Big Data Applications and Financ
 
 ---
 
+### Recommended Hardware
+
+CPU: i5-6500
+Ram: 2 GB
+
+---
+
 ## Development
 
 ```bash
@@ -55,9 +62,6 @@ make clean
 The Slack bot records all analysis results on Slack channels and sends notifications on trades processed. The following commands are supported:
 
 ```
-# require_privilege in the help command means whether every user can call the command
-# Or the command will only be callable for the admin Slack user
-
 help: Show all you can do with CATBOT
     - Format: help
 target: Target the cryptocurrency for trading
@@ -83,6 +87,10 @@ s_show_klines: Show the klines of targeted coin
 s_show_last_predict: Show the prediction of targeted coin
     - Format: s_show_last_predict [target]
     - Example: s_show_klines BTCUSDT
+
+# NOTE: require_privilege in the help command message means whether every user can call the command
+# Or the command will only be callable for the admin Slack user
+# It is configurable at configs/slackbot/commands.yml
 ```
 
 Due to the time constraint on development, currently, only the following targets are supported:
