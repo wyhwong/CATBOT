@@ -183,12 +183,12 @@ class SlackCommandExector:
         message = None
         if len(args) != 1:
             message = "Wrong command format, please check help."
-        if args[0] not in self.targets:
-            message = f"Not able to show, target {args[0]} is not in list of targets."
+        if args[0].upper() not in self.targets:
+            message = f"Not able to show, target {args[0].upper()} is not in list of targets."
         if message:
             self._post_message(text=message, channel=channel)
         else:
-            message = str({"scommand": "show_last_predict", "args": {"target": args[0]}})
+            message = str({"scommand": "show_last_predict", "args": {"target": args[0].upper()}})
             mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
             self.publisher.publish(message=mqtt_message)
 
