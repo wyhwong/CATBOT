@@ -55,6 +55,9 @@ make clean
 The Slack bot records all analysis results on Slack channels and sends notifications on trades processed. The following commands are supported:
 
 ```
+# require_privilege in the help command means whether every user can call the command
+# Or the command will only be callable for the admin Slack user
+
 help: Show all you can do with CATBOT
     - Format: help
 target: Target the cryptocurrency for trading
@@ -114,10 +117,9 @@ The statistical analyzer contains the following parts:
 
     1. Binance API, to query time series data from Binance
     2. Compose of time series models, to analyze queried time series data and forecast the future trend
-        a. StatsforecastAutoARIMA
-        b. LSTM
+        a. AutoARIMA
+        b. LSTM (Can be disabled in config file to spare computational power)
         c. LightGBM
-    3. Decider, to compute the final decision
 
 ---
 
@@ -137,6 +139,7 @@ Work in progress
 
 In the future, we may update CATBOT with the following changes:
 
+    - Trading related commands
     - Self trained text classifcation model
     - Better financial news scrapers with Selenium
     - Self trained time series forecasting model
