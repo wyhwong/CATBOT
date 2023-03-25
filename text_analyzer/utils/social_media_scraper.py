@@ -37,10 +37,12 @@ class RedditScraper(TextScraper):
 
         if keywords:
             for prompt in reversed(prompts):
+                keyword_in_prompt = False
                 for keyword in keywords:
-                    if keyword not in prompt:
-                        prompts.remove(prompt)
-                        break
+                    if keyword in prompt:
+                        keyword_in_prompt = True
+                if not keyword_in_prompt:
+                    prompts.remove(prompt)
         return prompts
 
     @overrides
