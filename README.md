@@ -77,7 +77,9 @@ t_analyze: Start text analysis on a set of keywords
 s_show_klines: Show the klines of targeted coin
     - Format: s_show_klines [target] [number of hours to collect data] [sampling frequency]
     - Example: s_show_klines BTCUSDT 24 5m
-s_show_last_predict: Not ready
+s_show_last_predict: Show the prediction of targeted coin
+    - Format: s_show_last_predict [target]
+    - Example: s_show_klines BTCUSDT
 ```
 
 Due to the time constraint on development, currently, only the following targets are supported:
