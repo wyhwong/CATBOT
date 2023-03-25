@@ -49,8 +49,7 @@ class Handler:
                 - norm_price_curr
                 - norm_price_min_predicts
             ) * weighting
-            target_scores[target]["stats"] = min(1, score_prediction)
-            target_scores[target]["stats"] = max(-1, score_prediction)
+            target_scores[target]["stats"] = min(max(-1., score_prediction), 1.)
         message = str({"command": "log", "scores": target_scores})
         self.publish_message(message)
 

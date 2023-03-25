@@ -13,9 +13,6 @@ def _get_keywords() -> dict:
 
 
 def _does_prompt_contain_keywords(prompt: str, keywords: list) -> str:
-    if type(prompt) is not str:
-        LOGGER.info(prompt)
-        return
     for keyword in keywords:
         if keyword.lower() in prompt.lower():
             return prompt
