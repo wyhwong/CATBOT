@@ -55,10 +55,16 @@ make clean
 The Slack bot records all analysis results on Slack channels and sends notifications on trades processed. The following commands are supported:
 
 ```
-help: "Show all you can do with CATBOT."
-target: "Target the cryptocurrency for trading."
-set_log: "Set the channel for logging."
-analyze: "Start a text plus statistical analysis on targeted cryptocurrencies."
+help: 'Show all you can do with CATBOT, format: "help"'
+target: 'Target the cryptocurrency for trading, format: "target [target_1] [target_2] ..."'
+untarget: 'Untarget the cryptocurrency for trading, format: "untarget [target_1] [target_2] ...'
+list_targets: 'List the currently targets set, format: "list_targets"'
+set_log: 'Set the channel for logging, format: "set_log"'
+unset_log: 'Unset the channel for logging, format: "unset_log"'
+analyze: 'Start a text plus statistical analysis on targeted cryptocurrencies, format: "analyze"'
+t_analyze: 'Start text analysis on a set of keywords, format: "t_analyze [keyword_1] [keyword_2] ..."'
+s_show_klines: 'Show the klines of targeted coin, format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"'
+s_show_last_predict: "(Not ready)"
 ```
 
 Due to the time constraint on development, currently, only the following targets are supported:
