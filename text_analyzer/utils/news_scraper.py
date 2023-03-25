@@ -42,6 +42,7 @@ class NewsScraper(TextScraper):
                 for keyword in keywords:
                     if keyword not in prompt:
                         prompts.remove(prompt)
+                        break
         return prompts
 
     @overrides
