@@ -17,10 +17,11 @@ CATBOT is a final capstone project for FINA4162 Big Data Applications and Financ
 
 ---
 
-### Recommended Hardware
+### Minimum System Requirements
 
-CPU: i5-6500
-Ram: 2 GB
+CPU: i5-6500 or Equivalent
+Memory: 2 GB RAM
+Storage: 18 GB available space
 
 ---
 
