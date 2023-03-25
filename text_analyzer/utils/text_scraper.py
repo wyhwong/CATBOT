@@ -9,7 +9,7 @@ LOGGER = get_logger(logger_name="Utils | Text Scaper")
 
 
 def _get_keywords() -> dict:
-    return read_content_from_yml(path="./configs/keywords.yml")
+    return read_content_from_yml(path="./configs/text_analyzer/keywords.yml")
 
 
 def _does_prompt_contain_keywords(prompt: str, keywords: list) -> str:
@@ -47,8 +47,6 @@ class TextScraper(ABC):
             return target_prompts
         for target in targets:
             keywords = t_imap(_dummy_function, [self.keywords[target]] * len(prompts))
-            prompts_with_keywords = p_map(
-                _does_prompt_contain_keywords, np.array(prompts, dtype=str), keywords
-            )
+            prompts_with_keywords = p_map(_does_prompt_contain_keywords, np.array(prompts, dtype=str), keywords)
             target_prompts[target] = list(filter(None, prompts_with_keywords))
         return target_prompts

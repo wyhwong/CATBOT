@@ -8,6 +8,7 @@ services:
       context: ./
       dockerfile: ./slackbot/Dockerfile
     volumes:
+      - ./configs:/app/configs
       - ${DATA_DIR}:/data
     env_file:
       - .env
@@ -20,6 +21,7 @@ services:
       context: ./
       dockerfile: ./binance_stats_analyzer/Dockerfile
     volumes:
+      - ./configs:/app/configs
       - ${DATA_DIR}:/data
     env_file:
       - .env
@@ -32,6 +34,7 @@ services:
       context: ./
       dockerfile: ./text_analyzer/Dockerfile
     volumes:
+      - ./configs:/app/configs
       - ${DATA_DIR}:/data
     env_file:
       - .env

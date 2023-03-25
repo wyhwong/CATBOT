@@ -11,7 +11,7 @@ LOGGER = get_logger(logger_name="Utils | News Scraper")
 
 
 def _get_news_web_urls() -> dict:
-    return read_content_from_yml(path="./configs/web_urls.yml")
+    return read_content_from_yml(path="./configs/text_analyzer/web_urls.yml")
 
 
 class NewsScraper(TextScraper):

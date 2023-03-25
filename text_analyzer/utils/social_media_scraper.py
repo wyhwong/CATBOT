@@ -10,7 +10,7 @@ LOGGER = get_logger(logger_name="Utils | Social Media Scraper")
 
 
 def _get_subreddits():
-    return read_content_from_yml(path="configs/subreddits.yml")
+    return read_content_from_yml(path="configs/text_analyzer/subreddits.yml")
 
 
 class RedditScraper(TextScraper):

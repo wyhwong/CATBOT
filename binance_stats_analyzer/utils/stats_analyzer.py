@@ -11,11 +11,12 @@ LOGGER = get_logger(logger_name="Utils | Statistical Analyzer")
 
 
 def get_analyzer_config() -> dict:
-    return read_content_from_yml(path="configs/analyzer.yml")
+    return read_content_from_yml(path="configs/stats_analyzer/analyzer.yml")
 
 
 class StatisticalAnalyzer:
     def __init__(self) -> None:
+        LOGGER.debug("Initializing statistical analyzer...")
         config = get_analyzer_config()
         self.model_LightGBM = LightGBMModel(lags=10, output_chunk_length=30)
         self.model_AutoARIMA = AutoARIMA()
@@ -34,16 +35,10 @@ class StatisticalAnalyzer:
             )
             self.models.append("LSTM")
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = {}, {}, {}
-        self.last_analysis_date = {}
         self.target_increase = config["target_increase"]
+        LOGGER.info("Initialized statistical analyzer.")
 
     def forecast_price(self, target: str, price_df: pd.DataFrame) -> tuple:
-        date_curr = pd.Timestamp.now().date()
-        if self.forecast.get(target) and self.last_analysis_date.get(target) == date_curr:
-            LOGGER.info("Prediction exists, read from cached data.")
-            return (self.forecast.get(target), self.forecast_avg_max.get(target), self.forecast_avg_min.get(target))
-
-        self.last_analysis_date[target] = date_curr
         forecast, forecast_avg_max, forecast_avg_min = {}, 0.0, 0.0
         for model in self.models:
             if model == "LSTM":

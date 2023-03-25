@@ -10,7 +10,7 @@ LOGGER = get_logger(logger_name="Utils | Classification Inference")
 
 
 def _get_class_to_label():
-    return read_content_from_yml(path="./configs/class_to_label.yml")
+    return read_content_from_yml(path="./configs/text_analyzer/class_to_label.yml")
 
 
 class ClassificationInference:
@@ -34,7 +34,7 @@ class ClassificationInference:
         target_score = 0
         class_scores = self.__call__(prompt)
         for idx, score in enumerate(class_scores):
-            target_score += (self.labels[idx]["weights"] * score)
+            target_score += self.labels[idx]["weights"] * score
         LOGGER.info(f"{prompt=}, {score=}")
         return target_score
 

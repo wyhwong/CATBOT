@@ -9,7 +9,7 @@ LOGGER = get_logger(logger_name="Utils | BinanceAPI")
 
 class BinanceClient:
     def __init__(self, api_key: str, api_secret: str) -> None:
-        LOGGER.info("Initializing Binance client...")
+        LOGGER.debug("Initializing Binance client...")
         self.client = Client(api_key=api_key, api_secret=api_secret)
         config = get_analyzer_config()
         self.interval = config["interval"]

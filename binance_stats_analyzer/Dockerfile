@@ -10,6 +10,4 @@ RUN conda install -c conda-forge ta-lib
 
 COPY ./binance_stats_analyzer /app
 COPY ./common_utils /app/common_utils
-COPY ./common_configs /app/common_configs
-
 WORKDIR /app

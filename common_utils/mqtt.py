@@ -10,7 +10,7 @@ LOGGER = get_logger(logger_name="Common Utils | MQTT")
 
 
 def load_broker_config() -> dict:
-    return read_content_from_yml(path="./common_configs/mqtt_broker.yml")
+    return read_content_from_yml(path="./configs/common/mqtt_broker.yml")
 
 
 class Broker:

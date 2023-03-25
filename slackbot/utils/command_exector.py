@@ -11,11 +11,11 @@ LOGGER = get_logger(logger_name="Utils | Command Exector")
 
 
 def _load_supported_cryptocurrencies() -> list:
-    return read_content_from_yml(path="./configs/supported_cryptocurrencies.yml")
+    return read_content_from_yml(path="./configs/slackbot/supported_cryptocurrencies.yml")
 
 
 def _load_command_list() -> dict:
-    return read_content_from_yml(path="./configs/commands.yml")
+    return read_content_from_yml(path="./configs/slackbot/commands.yml")
 
 
 class SlackCommandExector:
