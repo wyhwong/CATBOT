@@ -1,10 +1,54 @@
-help: 'Show all you can do with CATBOT, format: "help"'
-target: 'Target the cryptocurrency for trading, format: "target [target_1] [target_2] ..."'
-untarget: 'Untarget the cryptocurrency for trading, format: "untarget [target_1] [target_2] ...'
-list_targets: 'List the currently targets set, format: "list_targets"'
-set_log: 'Set the channel for logging, format: "set_log"'
-unset_log: 'Unset the channel for logging, format: "unset_log"'
-analyze: 'Start a text plus statistical analysis on targeted cryptocurrencies, format: "analyze"'
-t_analyze: 'Start text analysis on a set of keywords, format: "t_analyze [keyword_1] [keyword_2] ..."'
-s_show_klines: 'Show the klines of targeted coin, format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"'
-s_show_last_predict: "(Not ready)"
+help:
+  description: "Show all you can do with CATBOT"
+  format: "help"
+  require_privilege: false
+
+target:
+  description: "Target the cryptocurrency for trading"
+  format: "target [target_1] [target_2] ..."
+  example: "target BTCUSDT ETHUSDT"
+  require_privilege: true
+
+untarget:
+  description: "Untarget the cryptocurrency for trading"
+  format: "untarget [target_1] [target_2] ..."
+  example: "untarget BTCUSDT ETHUSDT"
+  require_privilege: true
+
+list_targets:
+  description: "List the currently targets set"
+  format: "list_targets"
+  require_privilege: false
+
+set_log:
+  description: "Set the channel for logging"
+  format: "set_log"
+  require_privilege: true
+
+unset_log:
+  description: "Unset the channel for logging"
+  format: "unset_log"
+  require_privilege: true
+
+analyze:
+  description: "Start a text plus statistical analysis on targeted cryptocurrencies"
+  format: "analyze"
+  require_privilege: true
+
+t_analyze:
+  description: "Start text analysis on a set of keywords"
+  format: "t_analyze [keyword_1] [keyword_2] ..."
+  example: "t_analyze crypto binance"
+  require_privilege: false
+
+s_show_klines:
+  description: "Show the klines of targeted coin"
+  format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"
+  example: "s_show_klines BTCUSDT 24 15m"
+  require_privilege: false
+
+s_show_last_predict:
+  description: "Show the last prediction on a specific coin"
+  format: "s_show_last_predict [target]"
+  example: "s_show_last_predict BTCUSDT"
+  require_privilege: false

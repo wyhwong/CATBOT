@@ -21,7 +21,8 @@ class StatisticalAnalyzer:
         self.model_LSTM = LightGBMModel(lags=1)
         self.model_AutoARIMA = AutoARIMA()
         self.model_LightGBM = RNNModel(input_chunk_length=30, model="LSTM", batch_size=16, n_epochs=50)
-        self.models = ["LSTM", "AutoARIMA", "LightGBM"]
+        # self.models = ["LSTM", "AutoARIMA", "LightGBM"]
+        self.models = ["AutoARIMA"]
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = {}, {}, {}
         self.last_analysis_date = {}
         self.target_increase = get_analyzer_config()["target_increase"]

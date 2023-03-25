@@ -2,7 +2,7 @@ import pandas as pd
 
 from .stats_analyzer import StatisticalAnalyzer
 from .binance_client import BinanceClient
-from .visualization import plot_klines
+from .visualization import plot_klines, plot_price_prediction
 from common_utils.logger import get_logger
 from common_utils.mqtt import Publisher, MQTTMessage
 
@@ -49,7 +49,7 @@ class Handler:
                 - norm_price_curr
                 - norm_price_min_predicts
             ) * weighting
-            target_scores[target]["stats"] = min(max(-1., score_prediction), 1.)
+            target_scores[target]["stats"] = min(max(-1.0, score_prediction), 1.0)
         message = str({"command": "log", "scores": target_scores})
         self.publish_message(message)
 
@@ -59,11 +59,24 @@ class Handler:
         LOGGER.info(f"Visualizing klines for {target}...")
         klines = self.binance_api.get_klines(
             symbol=target,
-            start_str=(pd.Timestamp.now() - pd.Timedelta(hours=duration)).strftime(
-                "%Y-%m-%d' %H:%M:%S"
-            ),
+            start_str=(pd.Timestamp.now() - pd.Timedelta(hours=duration)).strftime("%Y-%m-%d' %H:%M:%S"),
             interval=command_args["interval"],
         )
         plot_klines(klines=klines, target=target, output_dir="/data", savefig=True)
         message = str({"command": "post", "args": {"type": "png", "path": f"/data/{target}_klines.png"}})
+        self.publish_message(message=message)
+
+    def show_last_predict(self, command_args: dict):
+        target = command_args["target"].upper()
+        LOGGER.info(f"Visualizing the previous prediction")
+        price_df = self.binance_api.get_price(
+            symbol=target,
+            start_str=(pd.Timestamp.now() - pd.Timedelta(days=30)).strftime("%Y-%m-%d' %H:%M:%S"),
+            interval="1d",
+        )
+        predictions = self.stats_analyzer.forecast.get(target, None)
+        plot_price_prediction(
+            price_df=price_df, predictions=predictions, target=target, output_dir="/data", savefig=True
+        )
+        message = str({"command": "post", "args": {"type": "png", "path": f"/data/{target}_prediction.png"}})
         self.publish_message(message=message)

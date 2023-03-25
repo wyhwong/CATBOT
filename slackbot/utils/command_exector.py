@@ -42,8 +42,12 @@ class SlackCommandExector:
     def _prepare_help_message(self) -> str:
         message = "Available commands are the following:\n"
         for command, content in self.commands.items():
-            message += f"\t - {command}: {content} \n"
-        message += "Supported list of cryptocurrencies are the following:\n"
+            message += f"\t {command}: {content['description']}\n"
+            message += f"\t \t - format: {content['format']}\n"
+            if content.get("example", None):
+                message += f"\t \t - example: {content['example']}\n"
+            message += f"\t \t - require privilege: {content['require_privilege']}\n"
+        message += "\nSupported list of cryptocurrencies are the following:\n"
         for supported_target in self.supported_targets:
             message += f"\t - {supported_target} \n"
         return message
@@ -152,7 +156,6 @@ class SlackCommandExector:
         args = text.split(" ")[1:]
         if len(args) != 3:
             message = "Wrong command format, please check help."
-            return
         target, duration, interval = args
         message = None
         if interval not in ["1m", "5m", "1d"]:
@@ -165,19 +168,36 @@ class SlackCommandExector:
             if message:
                 self._post_message(text=message, channel=channel)
             else:
-                message = str({"scommand": "show_klines",
-                               "args": {"target": target,
-                                        "duration": duration,
-                                        "interval": interval}})
+                message = str(
+                    {"scommand": "show_klines", "args": {"target": target, "duration": duration, "interval": interval}}
+                )
                 mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
                 self.publisher.publish(message=mqtt_message)
+
+    def s_show_last_predict(self, text: str, user: str, channel: str) -> None:
+        if not self.log_channel:
+            LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
+            self.log_channel = channel
+            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
+        args = text.split(" ")[1:]
+        message = None
+        if len(args) != 1:
+            message = "Wrong command format, please check help."
+        if args[0] not in self.targets:
+            message = f"Not able to show, target {args[0]} is not in list of targets."
+        if message:
+            self._post_message(text=message, channel=channel)
+        else:
+            message = str({"scommand": "show_last_predict", "args": {"target": args[0]}})
+            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
+            self.publisher.publish(message=mqtt_message)
 
     def post(self, command_args: dict) -> None:
         posttype = command_args.get("type", None)
         if posttype in ["csv", "png"]:
-            self._post_attachment(title="User requested analysis results",
-                                  file=command_args.get("path", None),
-                                  channel=self.log_channel)
+            self._post_attachment(
+                title="User requested analysis results", file=command_args.get("path", None), channel=self.log_channel
+            )
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")

@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 import pandas as pd
+import seaborn as sns
+import numpy as np
 
 from common_utils.logger import get_logger
 
@@ -23,7 +25,7 @@ def initialize_plot(
     return fig, axes
 
 
-def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, savefig=False, close=True):
+def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, savefig=False, close=True) -> None:
     LOGGER.info(f"Plotting kine of {target}...")
     _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{target}")
     mpf.plot(data=klines, type="candle", show_nontrading=True, ax=ax)
@@ -38,3 +40,27 @@ def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, savefig=Fals
         LOGGER.debug(f"Closed plot.")
         plt.close()
     LOGGER.info(f"Plotted kine of {target}.")
+
+
+def plot_price_prediction(
+    price_df: pd.DataFrame, predictions: dict, target: str, output_dir=None, savefig=False, close=True
+) -> None:
+    _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{target} latest forecasting")
+    sns.lineplot(data=price_df, x="Time", y="Price", ax=ax, label="Real data")
+    if predictions:
+        for model, price_prediction in predictions.items():
+            price_prediction = np.insert(price_prediction, 0, price_df["Price"].iloc[-1])
+            prediction_time = pd.date_range(start=price_df["Time"].iloc[-1], freq="1d", periods=31)
+            prediction_df = pd.DataFrame({"Time": prediction_time, "Price": price_prediction})
+            sns.lineplot(data=prediction_df, x="Time", y="Price", ax=ax, label=f"Prediction ({model})")
+    if savefig:
+        if output_dir is None:
+            raise ValueError("outputDir must not be empty if savefig is True.")
+        savepath = f"{output_dir}/{target}_prediction.png"
+        LOGGER.debug(f"Saving plot at {savepath}.")
+        plt.savefig(savepath, facecolor="w")
+        LOGGER.info(f"Saved plot at {savepath}.")
+    if close:
+        LOGGER.debug(f"Closed plot.")
+        plt.close()
+    LOGGER.info(f"Plotted prediction of {target}.")

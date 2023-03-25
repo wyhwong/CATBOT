@@ -50,7 +50,9 @@ class BinanceClient:
 
     def get_price(self, symbol: str, start_str: str, interval: str) -> pd.DataFrame:
         dataframe = self._get_historical_data(symbol=symbol, start_str=start_str, interval=interval)
-        return dataframe[["OpenTime", "Open"]]
+        dataframe = dataframe[["OpenTime", "Open"]]
+        dataframe.columns = ["Time", "Price"]
+        return dataframe
 
     def query(self, targets: list) -> tuple:
         price_dataframes = {}
@@ -58,6 +60,5 @@ class BinanceClient:
         LOGGER.info(f"Querying data from Binance, {start_str=}, {targets=}...")
         for target in targets:
             price_dataframes[target] = self.get_price(symbol=target, start_str=start_str, interval=self.interval)
-            price_dataframes[target].columns = ["Time", "Price"]
             LOGGER.info(f"Queried data of {target} from Binance.")
         return price_dataframes

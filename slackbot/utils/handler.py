@@ -24,18 +24,22 @@ class MQTTHandler:
 
 
 class SlackMessageHandler:
-    def __init__(self, web_client: WebClient, user_id: str, publisher: Publisher, subscriber: Subscriber) -> None:
-        self.user_id = user_id
+    def __init__(
+        self, web_client: WebClient, privilege_user_id: str, publisher: Publisher, subscriber: Subscriber
+    ) -> None:
+        self.privilege_user_id = privilege_user_id
         self.commandExector = SlackCommandExector(web_client, publisher)
         self.subscriber = subscriber
         self.subscriber.handlers.append(MQTTHandler(command_exector=self.commandExector))
         Thread(target=self.subscriber.start, daemon=True).start()
 
-    def _is_user(self, user_id: str) -> bool:
-        if user_id == self.user_id:
-            return True
-        LOGGER.info(f"Received message from non user, ignored.")
-        return False
+    def _is_permission_enough(self, command: str, user_id: str) -> bool:
+        require_privilege = self.commandExector.commands[command]["require_privilege"]
+        if require_privilege and user_id != self.privilege_user_id:
+            LOGGER.info("Received command message from non privileged user, ignored.")
+            return False
+        LOGGER.info("Received command message from user, processing...")
+        return True
 
     def _is_command(self, text: str) -> bool:
         if text.split(" ")[0].lower() in self.commandExector.commands:
@@ -56,11 +60,13 @@ class SlackMessageHandler:
         if not self._is_vaild_message(message):
             return
         text, user, channel = message["text"], message["user"], message["channel"]
-        if not self._is_user(user):
+        if self._is_command(text):
+            command = text.split(" ")[0].lower()
+        if not self._is_permission_enough(command=command, user_id=user):
             return
         if self._is_command(text):
             self.commandExector.wait_if_after_analysis()
-            getattr(self.commandExector, text.split(" ")[0].lower())(text.lower(), user, channel)
+            getattr(self.commandExector, command)(text.lower(), user, channel)
         else:
             LOGGER.info(
                 f"Not responding to message: {message['text']}, user: {message['user']}, channel: {message['channel']}"
