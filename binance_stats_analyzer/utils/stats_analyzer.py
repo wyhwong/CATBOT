@@ -1,10 +1,8 @@
 import pandas as pd
 import numpy as np
-from copy import deepcopy
 from darts import TimeSeries
 from darts.models.forecasting.auto_arima import AutoARIMA
 from darts.models.forecasting.lgbm import LightGBMModel
-from darts.models.forecasting.rnn_model import RNNModel
 
 from common_utils.common import read_content_from_yml
 from common_utils.logger import get_logger
@@ -18,16 +16,28 @@ def get_analyzer_config() -> dict:
 
 class StatisticalAnalyzer:
     def __init__(self) -> None:
-        self.model_LSTM = LightGBMModel(lags=1)
+        config = get_analyzer_config()
+        self.model_LightGBM = LightGBMModel(lags=10, output_chunk_length=30)
         self.model_AutoARIMA = AutoARIMA()
-        self.model_LightGBM = RNNModel(input_chunk_length=30, model="LSTM", batch_size=16, n_epochs=50)
-        # self.models = ["LSTM", "AutoARIMA", "LightGBM"]
-        self.models = ["AutoARIMA"]
+        self.models = ["AutoARIMA", "LightGBM"]
+        if config["enable_LSTM"]:
+            from darts.models.forecasting.rnn_model import RNNModel
+
+            self.model_LSTM = RNNModel(
+                input_chunk_length=7,
+                training_length=365,
+                optimizer_kwargs={"lr": 1e-3},
+                model="LSTM",
+                batch_size=16,
+                n_epochs=50,
+                force_reset=True,
+            )
+            self.models.append("LSTM")
         self.forecast, self.forecast_avg_max, self.forecast_avg_min = {}, {}, {}
         self.last_analysis_date = {}
-        self.target_increase = get_analyzer_config()["target_increase"]
+        self.target_increase = config["target_increase"]
 
-    def forecast_price(self, target, time_series: TimeSeries, price_max: float, price_min: float) -> tuple:
+    def forecast_price(self, target: str, price_df: pd.DataFrame) -> tuple:
         date_curr = pd.Timestamp.now().date()
         if self.forecast.get(target) and self.last_analysis_date.get(target) == date_curr:
             LOGGER.info("Prediction exists, read from cached data.")
@@ -36,14 +46,20 @@ class StatisticalAnalyzer:
         self.last_analysis_date[target] = date_curr
         forecast, forecast_avg_max, forecast_avg_min = {}, 0.0, 0.0
         for model in self.models:
-            model_in_use = deepcopy(getattr(self, f"model_{model}"))
-            model_in_use.fit(series=time_series)
-            forecast[model] = model_in_use.predict(n=30).values()
+            if model == "LSTM":
+                price_max, price_min, time_series = self.transform_price_dataframe(dataframe=price_df, normalize=True)
+            else:
+                price_max, price_min, time_series = self.transform_price_dataframe(dataframe=price_df)
+            getattr(self, f"model_{model}").fit(series=time_series)
+            forecast[model] = getattr(self, f"model_{model}").predict(n=30).values()
             model_forecast_avg_max = forecast[model].max()
             forecast_avg_max += model_forecast_avg_max / len(self.models)
             model_forecast_avg_min = forecast[model].min()
             forecast_avg_min += model_forecast_avg_min / len(self.models)
-            forecast[model] = np.hstack(forecast[model]) * (price_max - price_min) + price_min
+            if model == "LSTM":
+                forecast[model] = np.hstack(forecast[model]) * (price_max - price_min) + price_min
+            else:
+                forecast[model] = np.hstack(forecast[model])
             LOGGER.info(
                 f"Predicted by {model}, max in 30 days: {model_forecast_avg_max}, min in 30 days: {model_forecast_avg_min}"
             )
@@ -54,9 +70,10 @@ class StatisticalAnalyzer:
         )
         return (forecast, forecast_avg_max, forecast_avg_min)
 
-    def transform_price_dataframe(self, dataframe: pd.DataFrame, freq="1d") -> tuple:
+    def transform_price_dataframe(self, dataframe: pd.DataFrame, freq="1d", normalize=False) -> tuple:
         price_max, price_min = dataframe["Price"].max(), dataframe["Price"].min()
-        dataframe["Price"] = (dataframe["Price"] - price_min) / (price_max - price_min)
+        if normalize:
+            dataframe["Price"] = (dataframe["Price"] - price_min) / (price_max - price_min)
         return (
             price_max,
             price_min,
