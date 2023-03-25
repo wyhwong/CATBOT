@@ -55,16 +55,29 @@ make clean
 The Slack bot records all analysis results on Slack channels and sends notifications on trades processed. The following commands are supported:
 
 ```
-help: 'Show all you can do with CATBOT, format: "help"'
-target: 'Target the cryptocurrency for trading, format: "target [target_1] [target_2] ..."'
-untarget: 'Untarget the cryptocurrency for trading, format: "untarget [target_1] [target_2] ...'
-list_targets: 'List the currently targets set, format: "list_targets"'
-set_log: 'Set the channel for logging, format: "set_log"'
-unset_log: 'Unset the channel for logging, format: "unset_log"'
-analyze: 'Start a text plus statistical analysis on targeted cryptocurrencies, format: "analyze"'
-t_analyze: 'Start text analysis on a set of keywords, format: "t_analyze [keyword_1] [keyword_2] ..."'
-s_show_klines: 'Show the klines of targeted coin, format: "s_show_klines [target] [number of hours to collect data] [sampling frequency]"'
-s_show_last_predict: "(Not ready)"
+help: Show all you can do with CATBOT
+    - Format: help
+target: Target the cryptocurrency for trading
+    - Format: target [target_1] [target_2] ...
+    - Example: target BTCUSDT ETHUSDT
+untarget: Untarget the cryptocurrency for trading
+    - Format: untarget [target_1] [target_2] ...
+    - Example: untarget BTCUSDT ETHUSDT
+list_targets: List the currently targets set
+    - Format: list_targets
+set_log: Set the channel for logging
+    - Format: set_log
+unset_log: Unset the channel for logging
+    - Format: unset_log
+analyze: Start a text plus statistical analysis on targeted cryptocurrencies
+    - Format: analyze
+t_analyze: Start text analysis on a set of keywords
+    - Format: t_analyze [keyword_1] [keyword_2]
+    - Example: t_analyze crypto
+s_show_klines: Show the klines of targeted coin
+    - Format: s_show_klines [target] [number of hours to collect data] [sampling frequency]
+    - Example: s_show_klines BTCUSDT 24 5m
+s_show_last_predict: Not ready
 ```
 
 Due to the time constraint on development, currently, only the following targets are supported:
