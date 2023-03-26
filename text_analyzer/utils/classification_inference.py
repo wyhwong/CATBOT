@@ -15,7 +15,7 @@ def _get_class_to_label():
 
 class ClassificationInference:
     def __init__(self, pretrained: str) -> None:
-        LOGGER.info("Initializing text classification inference...")
+        LOGGER.debug("Initializing text classification inference...")
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained)
         self.model = AutoModelForSequenceClassification.from_pretrained(pretrained)
         self.model.to(DEVICE)

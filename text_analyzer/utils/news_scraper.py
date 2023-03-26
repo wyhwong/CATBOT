@@ -17,10 +17,10 @@ def _get_news_web_urls() -> dict:
 class NewsScraper(TextScraper):
     @overrides
     def __init__(self) -> None:
-        LOGGER.info("Initializing news scraper...")
+        LOGGER.debug("Initializing News Scraper...")
         self.web_urls = _get_news_web_urls()
         self.keywords = _get_keywords()
-        LOGGER.info("Initialized news scraper.")
+        LOGGER.info("Initialized News Scraper.")
 
     @overrides
     def scrape(self, keywords: list = None) -> list:

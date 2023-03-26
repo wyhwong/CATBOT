@@ -16,7 +16,7 @@ def _get_subreddits():
 class RedditScraper(TextScraper):
     @overrides
     def __init__(self, client_id: str, client_secret: str, user_agent) -> None:
-        LOGGER.info("Initializing Reddit Scraper...")
+        LOGGER.debug("Initializing Reddit Scraper...")
         self.reddit_client = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
         self.keywords = _get_keywords()
         self.subreddits = _get_subreddits()
@@ -54,7 +54,7 @@ class RedditScraper(TextScraper):
 class TwitterScraper(TextScraper):
     @overrides
     def __init__(self, consumer_key: str, consumer_secret: str, access_token: str, access_token_secret: str) -> None:
-        LOGGER.info("Initializing Twitter Scraper.")
+        LOGGER.debug("Initializing Twitter Scraper.")
         auth = tweepy.OAuth1UserHandler(consumer_key, consumer_secret, access_token, access_token_secret)
         self.twitter_client = tweepy.API(auth, wait_on_rate_limit=True)
         self.keywords = _get_keywords()

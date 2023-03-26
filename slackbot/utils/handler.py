@@ -27,11 +27,13 @@ class SlackMessageHandler:
     def __init__(
         self, web_client: WebClient, privilege_user_id: str, publisher: Publisher, subscriber: Subscriber
     ) -> None:
+        LOGGER.debug("Initializing Slackbot Message Handler...")
         self.privilege_user_id = privilege_user_id
         self.commandExector = SlackCommandExector(web_client, publisher)
         self.subscriber = subscriber
         self.subscriber.handlers.append(MQTTHandler(command_exector=self.commandExector))
         Thread(target=self.subscriber.start, daemon=True).start()
+        LOGGER.debug("Initialized Slackbot Command Exector.")
 
     def _is_permission_enough(self, command: str, user_id: str) -> bool:
         require_privilege = self.commandExector.commands[command]["require_privilege"]

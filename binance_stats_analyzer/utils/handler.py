@@ -12,11 +12,11 @@ LOGGER = get_logger(logger_name="Utils | Handler")
 
 class Handler:
     def __init__(self, binance_api: BinanceClient, stats_analyzer: StatisticalAnalyzer, publisher: Publisher) -> None:
-        LOGGER.debug("Initializing handler...")
+        LOGGER.debug("Initializing Statistical Analyzer Handler...")
         self.publisher = publisher
         self.binance_api = binance_api
         self.stats_analyzer = stats_analyzer
-        LOGGER.info("Initialized hander.")
+        LOGGER.info("Initialized Statistical Analyzer Handler.")
 
     def on_MQTTMessage(self, mqtt_message: MQTTMessage) -> None:
         mqtt_message.decode_payload()

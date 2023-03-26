@@ -20,6 +20,7 @@ def _load_command_list() -> dict:
 
 class SlackCommandExector:
     def __init__(self, web_client: WebClient, publisher: Publisher) -> None:
+        LOGGER.debug("Initializing Slackbot Command Exector...")
         self.publisher = publisher
         self.topic = "slackbot-pub"
         self.web_client = web_client
@@ -30,6 +31,7 @@ class SlackCommandExector:
         self.analysis_waittime = pd.Timedelta(seconds=analysis_waittime)
         self.supported_targets = _load_supported_cryptocurrencies()
         self.commands = _load_command_list()
+        LOGGER.debug("Initialized Slackbot Command Exector.")
 
     def wait_if_after_analysis(self) -> None:
         if self.last_analysis_time:
@@ -158,12 +160,13 @@ class SlackCommandExector:
             message = "Wrong command format, please check help."
         target, duration, interval = args
         message = None
-        if interval not in ["1m", "5m", "1d"]:
-            message = 'Please use interval in ["1m", "5m", "1d"]'
+        if interval[-1] not in ["s", "m", "d"]:
+            message = 'Unit of interval should be in ["s", "m", "d"].'
         try:
+            int(interval[:-1])
             float(duration)
         except ValueError:
-            message = "Type of duration should be float."
+            message = "Type of duration should be float / Value in interval should be integer."
         finally:
             if message:
                 self._post_message(text=message, channel=channel)

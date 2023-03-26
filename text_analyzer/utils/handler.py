@@ -18,13 +18,13 @@ class Handler:
         text_inference: ClassificationInference,
         publisher: Publisher,
     ) -> None:
-        LOGGER.info("Initializing handler...")
+        LOGGER.debug("Initializing Text Analyzer Handler...")
         self.publisher = publisher
         self.reddit_scraper = reddit_scraper
         self.twitter_scraper = twitter_scraper
         self.text_inference = text_inference
         self.text_scraper = news_scraper
-        LOGGER.info("Initialized handler.")
+        LOGGER.info("Initialized Text Analyzer Handler.")
 
     def on_MQTTMessage(self, mqtt_message: MQTTMessage) -> None:
         mqtt_message.decode_payload()
