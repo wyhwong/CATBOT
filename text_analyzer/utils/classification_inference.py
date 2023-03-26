@@ -23,11 +23,11 @@ class ClassificationInference:
         LOGGER.info("Initialized text classification inference.")
 
     def __call__(self, prompt):
-        LOGGER.debug(f"Input: {prompt=}")
+        LOGGER.info(f"Input: {prompt=}")
         model_input = self.tokenizer(prompt, padding=True, truncation=True, max_length=512, return_tensors="pt")
         model_output = self.model(model_input["input_ids"], attention_mask=model_input["attention_mask"])
         model_output = nn.functional.softmax(model_output.logits, dim=-1).detach().numpy()[0]
-        LOGGER.debug(f"Output: {model_output=}")
+        LOGGER.info(f"Output: {model_output=}")
         return model_output
 
     def get_score(self, prompt: str) -> float:
