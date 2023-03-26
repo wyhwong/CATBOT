@@ -48,6 +48,7 @@ services:
     hostname: mosquitto
     container_name: mqtt-broker
     volumes:
+      - ./configs:/app/configs
       - ./mqtt-broker/:/mosquitto/
     env_file:
       - .env
