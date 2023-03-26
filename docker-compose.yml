@@ -13,6 +13,7 @@ services:
       - ${DATA_DIR}:/data
     env_file:
       - .env
+    restart: always
 
   binance_stats_analyzer:
     image: binance_stats_analyzer
@@ -26,6 +27,7 @@ services:
       - ${DATA_DIR}:/data
     env_file:
       - .env
+    restart: always
 
   text_analyzer:
     image: text_analyzer
@@ -39,6 +41,7 @@ services:
       - ${DATA_DIR}:/data
     env_file:
       - .env
+    restart: always
 
   mosquitto:
     image: eclipse-mosquitto
@@ -50,3 +53,4 @@ services:
       - .env
     ports:
       - 1883:1883
+    restart: always
