@@ -1,8 +1,11 @@
 version: "3.8"
+
 services:
-  slack:
+  slackbot:
     command: python3 main.py
+
   binance_stats_analyzer:
     command: python3 main.py
+
   text_analyzer:
     command: python3 main.py

@@ -1,20 +1,23 @@
 version: "3.8"
+
 services:
-  slack:
-    working_dir: /app_dev
+  slackbot:
     volumes:
       - ./slackbot/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
-    command: tail -f /dev/null
-  binance_stats_analyzer:
     working_dir: /app_dev
+    command: tail -f /dev/null
+
+  binance_stats_analyzer:
     volumes:
       - ./binance_stats_analyzer/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
-    command: tail -f /dev/null
-  text_analyzer:
     working_dir: /app_dev
+    command: tail -f /dev/null
+
+  text_analyzer:
     volumes:
       - ./text_analyzer/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
+    working_dir: /app_dev
     command: tail -f /dev/null
