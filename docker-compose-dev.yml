@@ -5,6 +5,7 @@ services:
     volumes:
       - ./slackbot/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
+      - ./configs/:/app_dev/configs/
     working_dir: /app_dev
     command: tail -f /dev/null
 
@@ -12,6 +13,7 @@ services:
     volumes:
       - ./binance_stats_analyzer/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
+      - ./configs/:/app_dev/configs/
     working_dir: /app_dev
     command: tail -f /dev/null
 
@@ -19,5 +21,6 @@ services:
     volumes:
       - ./text_analyzer/:/app_dev/
       - ./common_utils/:/app_dev/common_utils/
+      - ./configs/:/app_dev/configs/
     working_dir: /app_dev
     command: tail -f /dev/null
