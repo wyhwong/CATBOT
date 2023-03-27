@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-RUN TZ=Asia/Hong_Kong
+ENV TZ=Asia/Hong_Kong
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y tzdata python3 python3-pip -y

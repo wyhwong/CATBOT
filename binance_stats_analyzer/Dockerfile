@@ -1,5 +1,5 @@
 FROM continuumio/miniconda3:latest
-RUN TZ=Asia/Hong_Kong
+ENV TZ=Asia/Hong_Kong
 
 RUN apt-get update && apt-get install -y tzdata python3 python3-pip -y
 RUN python3 -m pip install --upgrade pip
