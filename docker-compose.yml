@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   slackbot:
-    image: slackbot
+    image: slackbot:${VERSION}
     hostname: slackbot
     container_name: slackbot
     build:
@@ -15,7 +15,7 @@ services:
     restart: on-failure:2
 
   binance_stats_analyzer:
-    image: binance_stats_analyzer
+    image: binance_stats_analyzer:${VERSION}
     hostname: binance_stats_analyzer
     container_name: binance_stats_analyzer
     build:
@@ -28,7 +28,7 @@ services:
     restart: on-failure:2
 
   text_analyzer:
-    image: text_analyzer
+    image: text_analyzer:${VERSION}
     hostname: text_analyzer
     container_name: text_analyzer
     build:
