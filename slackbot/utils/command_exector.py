@@ -56,19 +56,13 @@ class SlackCommandExector:
 
     def _post_message(self, text: str, channel: str) -> None:
         LOGGER.debug(f"Sending message to Slack, channel: {channel}, text: {text}")
-        try:
-            sent_message = self.web_client.chat_postMessage(channel=channel, text=text)["ok"]
-            LOGGER.info(f"Successfully sent message: {sent_message}")
-        except Exception as err:
-            LOGGER.info(f"Failed to send message: {err}")
+        sent_message = self.web_client.chat_postMessage(channel=channel, text=text)["ok"]
+        LOGGER.info(f"Successfully sent message: {sent_message}")
 
     def _post_attachment(self, title: str, file: str, channel: str) -> None:
         LOGGER.debug(f"Sending attachment to Slack, channel: {channel}, file: {file}")
-        try:
-            sent_attachment = self.web_client.files_upload_v2(title=title, file=file, channel=channel)
-            LOGGER.info(f"Successfully sent attachment: {sent_attachment}")
-        except Exception as err:
-            LOGGER.info(f"Failed to send message: {err}")
+        sent_attachment = self.web_client.files_upload_v2(title=title, file=file, channel=channel)
+        LOGGER.info(f"Successfully sent attachment: {sent_attachment}")
 
     def help(self, text: str, user: str, channel: str) -> None:
         if text == "help":
