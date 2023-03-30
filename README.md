@@ -129,20 +129,14 @@ The statistical analyzer contains the following parts:
     1. Binance API, to query time series data from Binance
     2. Compose of time series models, to analyze queried time series data and forecast the future trend
         a. AutoARIMA
-        b. LSTM (Need to be enabled in config file to spare computational power)
-        c. LightGBM
+        b. LightGBM
+        c. LSTM (need to be enabled in the config)
 
 ---
 
 ## MQTT Broker
 
 The MQTT Broker is used for container-to-container communication.
-
----
-
-## Presentation Material
-
-Work in progress
 
 ---
 
