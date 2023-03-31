@@ -19,6 +19,8 @@ Declaration: Please note that the data visualization or any scores provided is s
 
 - Slack API tokens and keys: [https://api.slack.com/tutorials/tracks/getting-a-token](https://api.slack.com/tutorials/tracks/getting-a-token)
 
+- Text Classification Models on Hugging Face: [https://huggingface.co/models?pipeline_tag=text-classification](https://huggingface.co/models?pipeline_tag=text-classification)
+
 - Reddit Developer Keys (Optional): [https://www.reddit.com/wiki/api/](https://www.reddit.com/wiki/api/)
 
 - Twitter Developer Keys (Optional): [https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
