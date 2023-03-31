@@ -64,9 +64,8 @@ class SlackMessageHandler:
         text, user, channel = message["text"], message["user"], message["channel"]
         if self._is_command(text):
             command = text.split(" ")[0].lower()
-        if not self._is_permission_enough(command=command, user_id=user):
-            return
-        if self._is_command(text):
+            if not self._is_permission_enough(command=command, user_id=user):
+                return
             self.commandExector.wait_if_after_analysis()
             getattr(self.commandExector, command)(text.lower(), user, channel)
         else:
