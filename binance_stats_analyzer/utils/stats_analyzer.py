@@ -19,7 +19,7 @@ class StatisticalAnalyzer:
         LOGGER.debug("Initializing statistical analyzer...")
         config = get_analyzer_config()
         self.model_LightGBM = LightGBMModel(lags=10, output_chunk_length=30)
-        self.model_AutoARIMA = AutoARIMA(start_p=10, start_q=10)
+        self.model_AutoARIMA = AutoARIMA(start_p=10, max_p=30, start_q=10, max_q=30)
         self.models = ["AutoARIMA", "LightGBM"]
         if config["enable_LSTM"]:
             from darts.models.forecasting.rnn_model import RNNModel

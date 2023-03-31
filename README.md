@@ -15,6 +15,12 @@ CATBOT is a final capstone project for FINA4162 Big Data Applications and Financ
 
 - Docker-compose: [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
 
+- Slack API tokens and keys: [https://api.slack.com/tutorials/tracks/getting-a-token](https://api.slack.com/tutorials/tracks/getting-a-token)
+
+- Reddit Developer Keys (Optional): [https://www.reddit.com/wiki/api/](https://www.reddit.com/wiki/api/)
+
+- Twitter Developer Keys (Optional): [https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
+
 ---
 
 ### Minimum System Requirements

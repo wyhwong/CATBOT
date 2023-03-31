@@ -1,4 +1,4 @@
-interval: 1d
-duration_in_days: 1825
-target_increase: 10.
-enable_LSTM: false
+interval: 1d                   # Sampling frequency of the time series
+duration_in_days: 1825         # Sampling period of the time series
+target_increase: 10.           # Targeted percentage price increase of the cryptocurrency
+enable_LSTM: false             # Enable LSTM prediction (Only when you have enough)
