@@ -4,7 +4,7 @@ from binance.client import Client
 from .stats_analyzer import get_analyzer_config
 from common_utils.logger import get_logger
 
-LOGGER = get_logger(logger_name="Utils | BinanceAPI")
+LOGGER = get_logger("statistical_analyzer/utils/binance_client")
 
 
 class BinanceClient:

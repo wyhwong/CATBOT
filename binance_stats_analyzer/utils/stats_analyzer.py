@@ -4,14 +4,14 @@ from darts import TimeSeries
 from darts.models.forecasting.auto_arima import AutoARIMA
 from darts.models.forecasting.lgbm import LightGBMModel
 
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 from common_utils.logger import get_logger
 
-LOGGER = get_logger(logger_name="Utils | Statistical Analyzer")
+LOGGER = get_logger("statistical_analyzer/utils/stats_analyzer")
 
 
 def get_analyzer_config() -> dict:
-    return read_content_from_yml(path="configs/stats_analyzer/analyzer.yml")
+    return load_yml("configs/stats_analyzer/analyzer.yml")
 
 
 class StatisticalAnalyzer:

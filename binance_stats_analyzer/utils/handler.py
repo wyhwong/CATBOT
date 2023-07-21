@@ -7,7 +7,7 @@ from common_utils.logger import get_logger
 from common_utils.mqtt import Publisher, MQTTMessage
 
 
-LOGGER = get_logger(logger_name="Utils | Handler")
+LOGGER = get_logger("statistical_analyzer/utils/handler")
 
 
 class Handler:
@@ -62,7 +62,7 @@ class Handler:
             start_str=(pd.Timestamp.now() - pd.Timedelta(hours=duration)).strftime("%Y-%m-%d' %H:%M:%S"),
             interval=command_args["interval"],
         )
-        plot_klines(klines=klines, target=target, output_dir="/data", savefig=True)
+        plot_klines(klines=klines, target=target, output_dir="/data")
         message = str({"command": "post", "args": {"type": "png", "path": f"/data/{target}_klines.png"}})
         self.publish_message(message=message)
 
@@ -75,8 +75,6 @@ class Handler:
             interval="1d",
         )
         predictions = self.stats_analyzer.forecast.get(target, None)
-        plot_price_prediction(
-            price_df=price_df, predictions=predictions, target=target, output_dir="/data", savefig=True
-        )
+        plot_price_prediction(price_df=price_df, predictions=predictions, target=target, output_dir="/data")
         message = str({"command": "post", "args": {"type": "png", "path": f"/data/{target}_prediction.png"}})
         self.publish_message(message=message)

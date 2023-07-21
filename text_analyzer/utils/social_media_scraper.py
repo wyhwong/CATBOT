@@ -4,13 +4,13 @@ from overrides import overrides
 
 from .news_scraper import TextScraper, _get_keywords, _is_str
 from common_utils.logger import get_logger
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 
-LOGGER = get_logger(logger_name="Utils | Social Media Scraper")
+LOGGER = get_logger("text_analyzer/utils/social_media_scraper")
 
 
 def _get_subreddits():
-    return read_content_from_yml(path="configs/text_analyzer/subreddits.yml")
+    return load_yml("configs/text_analyzer/subreddits.yml")
 
 
 class RedditScraper(TextScraper):

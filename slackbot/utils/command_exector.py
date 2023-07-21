@@ -4,18 +4,18 @@ from time import sleep
 from slack_sdk.web import WebClient
 
 from common_utils.mqtt import Publisher, MQTTMessage
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 from common_utils.logger import get_logger
 
-LOGGER = get_logger(logger_name="Utils | Command Exector")
+LOGGER = get_logger("slackbot/utils/command_exector")
 
 
 def _load_supported_cryptocurrencies() -> list:
-    return read_content_from_yml(path="./configs/slackbot/supported_cryptocurrencies.yml")
+    return load_yml("./configs/slackbot/supported_cryptocurrencies.yml")
 
 
 def _load_command_list() -> dict:
-    return read_content_from_yml(path="./configs/slackbot/commands.yml")
+    return load_yml("./configs/slackbot/commands.yml")
 
 
 class SlackCommandExector:

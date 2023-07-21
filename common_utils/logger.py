@@ -1,22 +1,18 @@
 import os
 import logging
 
-FORMAT = "%(asctime)s [%(name)s | %(levelname)s]: %(message)s"
+LOGLEVEL = int(os.getenv("LOGLEVEL", "20"))
+LOGFMT = "%(asctime)s [%(name)s | %(levelname)s]: %(message)s"
 DATEFMT = "%Y-%m-%d %H:%M:%S"
-logging.basicConfig(format=FORMAT, datefmt=DATEFMT)
+logging.basicConfig(format=LOGFMT, datefmt=DATEFMT, level=LOGLEVEL)
 
 
-def get_logger(logger_name: str, log_file_path=None) -> logging.Logger:
+def get_logger(logger_name: str, log_filepath=None) -> logging.Logger:
     logger = logging.getLogger(logger_name)
-    level = os.getenv("LOGLEVEL")
-    if level is None:
-        logger.info(f"GetEnvError or running in local environment.")
-        level = 20
-    else:
-        level = int(level)
-    logger.setLevel(level=level)
-    logger.addHandler(logging.StreamHandler())
-    if log_file_path:
-        logger.addHandler(logging.FileHandler(log_file_path))
-    logger.debug(f"Logger started, level={level}")
+    logger.setLevel(LOGLEVEL)
+    if log_filepath:
+        handler = logging.FileHandler(filename=log_filepath)
+        formatter = logging.Formatter(fmt=LOGFMT, datefmt=DATEFMT)
+        handler.setFormatter(fmt=formatter)
+        logger.addHandler(handler)
     return logger

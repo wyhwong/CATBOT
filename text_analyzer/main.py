@@ -8,7 +8,7 @@ from utils.classification_inference import ClassificationInference
 from common_utils.logger import get_logger
 from common_utils.mqtt import Subscriber, Publisher, Broker
 
-LOGGER = get_logger(logger_name="Main | Text Analyzer")
+LOGGER = get_logger("Text Analyzer")
 
 
 def main() -> None:

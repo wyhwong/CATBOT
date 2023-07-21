@@ -4,48 +4,59 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 
+from dataclasses import dataclass
 from common_utils.logger import get_logger
+from common_utils.common import check_and_create_dir
 
-LOGGER = get_logger("Utils | Visualization")
+LOGGER = get_logger("statistical_analyzer/utils/visualization")
 
 
-def initialize_plot(
-    nrows=1, ncols=1, height=6, width=10, title="", xlabel="", ylabel="", tpad=2.5, lpad=0.1, bpad=0.12, fontsize=12
-):
-    LOGGER.debug(
-        f"Initializing plot, {nrows=}, {ncols=}, {height=}, {width=}, {title=}, {xlabel=}, {ylabel=}, {tpad=}, {lpad=}, {bpad=}, {fontsize=}."
-    )
-    fig, axes = plt.subplots(nrows, ncols, figsize=(width, height))
-    fig.tight_layout(pad=tpad)
-    fig.subplots_adjust(left=lpad, bottom=bpad)
-    fig.suptitle(title, fontsize=fontsize)
-    fig.text(x=0.04, y=0.5, s=ylabel, fontsize=fontsize, rotation="vertical", verticalalignment="center")
-    fig.text(x=0.5, y=0.04, s=xlabel, fontsize=fontsize, horizontalalignment="center")
-    LOGGER.info("Initialized plot.")
+@dataclass
+class Padding:
+    tpad: float = 2.5
+    lpad: float = 0.1
+    bpad: float = 0.12
+
+
+@dataclass
+class Labels:
+    title: str = ""
+    xlabel: str = ""
+    ylabel: str = ""
+    zlabel: str = ""
+
+
+def initialize_plot(nrows=1, ncols=1, figsize=(10, 6), labels=Labels(), padding=Padding(), fontsize=12):
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
+    fig.tight_layout(pad=padding.tpad)
+    fig.subplots_adjust(left=padding.lpad, bottom=padding.bpad)
+    fig.suptitle(labels.title, fontsize=fontsize)
+    fig.text(x=0.04, y=0.5, s=labels.ylabel, fontsize=fontsize, rotation="vertical", verticalalignment="center")
+    fig.text(x=0.5, y=0.04, s=labels.xlabel, fontsize=fontsize, horizontalalignment="center")
     return fig, axes
 
 
-def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, savefig=False, close=True) -> None:
-    LOGGER.info(f"Plotting kine of {target}...")
-    _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{target}")
-    mpf.plot(data=klines, type="candle", show_nontrading=True, ax=ax)
-    if savefig:
-        if output_dir is None:
-            raise ValueError("outputDir must not be empty if savefig is True.")
-        savepath = f"{output_dir}/{target}_klines.png"
-        LOGGER.debug(f"Saving plot at {savepath}.")
+def savefig_and_close(filename: str, output_dir=None, close=True) -> None:
+    if output_dir:
+        check_and_create_dir(output_dir)
+        savepath = f"{output_dir}/{filename}"
         plt.savefig(savepath, facecolor="w")
         LOGGER.info(f"Saved plot at {savepath}.")
     if close:
-        LOGGER.debug(f"Closed plot.")
         plt.close()
-    LOGGER.info(f"Plotted kine of {target}.")
 
 
-def plot_price_prediction(
-    price_df: pd.DataFrame, predictions: dict, target: str, output_dir=None, savefig=False, close=True
-) -> None:
-    _, ax = initialize_plot(nrows=1, ncols=1, height=6, width=10, title=f"{target} latest forecasting")
+def plot_klines(klines: pd.DataFrame, target: str, output_dir=None, close=True) -> None:
+    LOGGER.info(f"Plotting kine of {target}...")
+    labels = Labels(target)
+    _, ax = initialize_plot(labels=labels)
+    mpf.plot(data=klines, type="candle", show_nontrading=True, ax=ax)
+    savefig_and_close(f"{target}_klines.png", output_dir, close)
+
+
+def plot_price_prediction(price_df: pd.DataFrame, predictions: dict, target: str, output_dir=None, close=True) -> None:
+    labels = Labels(f"{target} latest forecasting")
+    _, ax = initialize_plot(labels=labels)
     sns.lineplot(data=price_df, x="Time", y="Price", ax=ax, label="Real data")
     if predictions:
         for model, price_prediction in predictions.items():
@@ -53,14 +64,4 @@ def plot_price_prediction(
             prediction_time = pd.date_range(start=price_df["Time"].iloc[-1], freq="1d", periods=31)
             prediction_df = pd.DataFrame({"Time": prediction_time, "Price": price_prediction})
             sns.lineplot(data=prediction_df, x="Time", y="Price", ax=ax, label=f"Prediction ({model})")
-    if savefig:
-        if output_dir is None:
-            raise ValueError("outputDir must not be empty if savefig is True.")
-        savepath = f"{output_dir}/{target}_prediction.png"
-        LOGGER.debug(f"Saving plot at {savepath}.")
-        plt.savefig(savepath, facecolor="w")
-        LOGGER.info(f"Saved plot at {savepath}.")
-    if close:
-        LOGGER.debug(f"Closed plot.")
-        plt.close()
-    LOGGER.info(f"Plotted prediction of {target}.")
+    savefig_and_close(f"{target}_prediction.png", output_dir, close)

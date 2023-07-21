@@ -10,7 +10,7 @@ from common_utils.mqtt import Broker, Subscriber, Publisher
 from common_utils.common import get_logger
 from utils.handler import SlackMessageHandler
 
-LOGGER = get_logger(logger_name="Main | Slackbot")
+LOGGER = get_logger("Slackbot")
 
 
 def main():

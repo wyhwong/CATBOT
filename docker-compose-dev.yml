@@ -3,24 +3,24 @@ version: "3.8"
 services:
   slackbot:
     volumes:
-      - ./slackbot/:/app_dev/
-      - ./common_utils/:/app_dev/common_utils/
-      - ./configs/:/app_dev/configs/
-    working_dir: /app_dev
+      - ./slackbot/:/home/${USERNAME}/app_dev/
+      - ./common_utils/:/home/${USERNAME}/app_dev/common_utils/
+      - ./configs/:/home/${USERNAME}/app_dev/configs/
+    working_dir: /home/${USERNAME}/app_dev
     command: tail -f /dev/null
 
   binance_stats_analyzer:
     volumes:
-      - ./binance_stats_analyzer/:/app_dev/
-      - ./common_utils/:/app_dev/common_utils/
-      - ./configs/:/app_dev/configs/
-    working_dir: /app_dev
+      - ./binance_stats_analyzer/:/home/${USERNAME}/app_dev/
+      - ./common_utils/:/home/${USERNAME}/app_dev/common_utils/
+      - ./configs/:/home/${USERNAME}/app_dev/configs/
+    working_dir: /home/${USERNAME}/app_dev
     command: tail -f /dev/null
 
   text_analyzer:
     volumes:
-      - ./text_analyzer/:/app_dev/
-      - ./common_utils/:/app_dev/common_utils/
-      - ./configs/:/app_dev/configs/
-    working_dir: /app_dev
+      - ./text_analyzer/:/home/${USERNAME}/app_dev/
+      - ./common_utils/:/home/${USERNAME}/app_dev/common_utils/
+      - ./configs/:/home/${USERNAME}/app_dev/configs/
+    working_dir: /home/${USERNAME}/app_dev
     command: tail -f /dev/null

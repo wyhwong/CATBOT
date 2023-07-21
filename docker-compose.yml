@@ -1,53 +1,87 @@
 version: "3.8"
 
+x-env:
+  # Analyzer
+  &env
+  - LOGLEVEL=${LOGLEVEL}
+  - ANALYSIS_INTERVAL_IN_SECOND=${ANALYSIS_INTERVAL_IN_SECOND}
+  - ANALYSIS_WAITTIME=${ANALYSIS_WAITTIME}
+  - TEXT_INFERENCE_PRETRAINED=${TEXT_INFERENCE_PRETRAINED}
+
+  # Binance
+  - BINANCE_API_KEY=${BINANCE_API_KEY}
+  - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+
+  # Slack
+  - SLACK_TOKEN=${SLACK_TOKEN}
+  - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
+  - SLACK_USER_ID=${SLACK_USER_ID}
+
+  # Reddit
+  - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+  - REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+  - REDDIT_USER_AGENT=${REDDIT_USER_AGENT}
+
+  # Twitter
+  - TWEEPY_CONSUMER_KEY=${TWEEPY_CONSUMER_KEY}
+  - TWEEPY_CONSUMER_SECRET=${TWEEPY_CONSUMER_SECRET}
+  - TWEEPY_ACCESS_TOKEN=${TWEEPY_ACCESS_TOKEN}
+  - TWEEPY_ACCESS_TOKEN_SECRET=${TWEEPY_ACCESS_TOKEN_SECRET}
+
+x-data-dir: &data-dir ${DATA_DIR}:/data
+
+x-build-args: &build-args
+  USERNAME: ${USERNAME}
+  USER_ID: ${USER_ID}
+  GROUP_ID: ${GROUP_ID}
+  TZ: ${TZ}
+
 services:
   slackbot:
-    image: slackbot:${VERSION}
+    image: catbot.slackbot:${VERSION}
     hostname: slackbot
     container_name: slackbot
     build:
       context: ./
       dockerfile: ./slackbot/Dockerfile
+      args: *build-args
     volumes:
-      - ${DATA_DIR}:/data
-    env_file:
-      - .env
+      - *data-dir
+    environment: *env
     restart: on-failure:2
 
   binance_stats_analyzer:
-    image: binance_stats_analyzer:${VERSION}
+    image: catbot.binance_stats_analyzer:${VERSION}
     hostname: binance_stats_analyzer
     container_name: binance_stats_analyzer
     build:
       context: ./
       dockerfile: ./binance_stats_analyzer/Dockerfile
+      args: *build-args
     volumes:
-      - ${DATA_DIR}:/data
-    env_file:
-      - .env
+      - *data-dir
+    environment: *env
     restart: on-failure:2
 
   text_analyzer:
-    image: text_analyzer:${VERSION}
+    image: catbot.text_analyzer:${VERSION}
     hostname: text_analyzer
     container_name: text_analyzer
     build:
       context: ./
       dockerfile: ./text_analyzer/Dockerfile
+      args: *build-args
     volumes:
-      - ${DATA_DIR}:/data
-    env_file:
-      - .env
+      - *data-dir
+    environment: *env
     restart: on-failure:2
 
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto
-    container_name: mqtt-broker
+    container_name: mosquitto
     volumes:
       - ./mqtt-broker/:/mosquitto/
-    env_file:
-      - .env
     ports:
       - 1883:1883
     restart: on-failure:2

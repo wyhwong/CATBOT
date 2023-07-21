@@ -2,14 +2,14 @@ import numpy as np
 from abc import ABC, abstractmethod
 from p_tqdm import p_map, t_imap
 
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 from common_utils.logger import get_logger
 
-LOGGER = get_logger(logger_name="Utils | Text Scaper")
+LOGGER = get_logger("text_analyzer/utils/text_scaper")
 
 
 def _get_keywords() -> dict:
-    return read_content_from_yml(path="./configs/text_analyzer/keywords.yml")
+    return load_yml("./configs/text_analyzer/keywords.yml")
 
 
 def _does_prompt_contain_keywords(prompt: str, keywords: list) -> str:

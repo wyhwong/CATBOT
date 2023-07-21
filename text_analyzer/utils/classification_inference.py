@@ -3,14 +3,14 @@ from torch import nn
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 from common_utils.logger import get_logger
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 
 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-LOGGER = get_logger(logger_name="Utils | Classification Inference")
+LOGGER = get_logger("text_analyzer/utils/classification_inference")
 
 
 def _get_class_to_label():
-    return read_content_from_yml(path="./configs/text_analyzer/class_to_label.yml")
+    return load_yml("./configs/text_analyzer/class_to_label.yml")
 
 
 class ClassificationInference:

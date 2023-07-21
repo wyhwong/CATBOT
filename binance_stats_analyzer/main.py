@@ -7,7 +7,7 @@ from utils.binance_client import BinanceClient
 from common_utils.logger import get_logger
 from common_utils.mqtt import Subscriber, Publisher, Broker
 
-LOGGER = get_logger(logger_name="Main | Statistical Analyzer")
+LOGGER = get_logger("Statistical Analyzer")
 
 
 def main() -> None:

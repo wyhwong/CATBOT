@@ -5,7 +5,7 @@ from common_utils.mqtt import Subscriber, Publisher
 from common_utils.logger import get_logger
 from .command_exector import SlackCommandExector
 
-LOGGER = get_logger(logger_name="Utils | Handler")
+LOGGER = get_logger("slackbot/utils/handler")
 
 
 class MQTTHandler:

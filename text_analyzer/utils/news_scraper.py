@@ -3,15 +3,15 @@ from bs4 import BeautifulSoup
 from overrides import overrides
 
 from common_utils.logger import get_logger
-from common_utils.common import read_content_from_yml
+from common_utils.common import load_yml
 from .text_scraper import TextScraper, _get_keywords, _is_str
 
 
-LOGGER = get_logger(logger_name="Utils | News Scraper")
+LOGGER = get_logger("text_analyzer/utils/news_scraper")
 
 
 def _get_news_web_urls() -> dict:
-    return read_content_from_yml(path="./configs/text_analyzer/web_urls.yml")
+    return load_yml("./configs/text_analyzer/web_urls.yml")
 
 
 class NewsScraper(TextScraper):

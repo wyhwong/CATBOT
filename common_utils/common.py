@@ -3,28 +3,26 @@ import os
 
 from .logger import get_logger
 
-LOGGER = get_logger("Common Utils | Common")
+LOGGER = get_logger("common_utils/common")
 
 
-def read_content_from_yml(path: str) -> dict:
-    LOGGER.info(f"Reading {path}...")
-    with open(path, "r") as file:
-        content = yaml.load(file, Loader=yaml.SafeLoader)
-    LOGGER.debug(f"Content: {content}.")
-    return content
+def load_yml(filepath: str) -> dict:
+    LOGGER.debug(f"Read yml: {filepath}")
+    with open(filepath, "r") as file:
+        yml_content = yaml.load(file, Loader=yaml.SafeLoader)
+    return yml_content
 
 
-def save_dict_as_yml(path: str, input_dict: dict) -> None:
-    LOGGER.debug(f"Saving dict: {input_dict}...")
-    with open(path, "w") as file:
+def save_dict_as_yml(filepath: str, input_dict: dict) -> None:
+    with open(filepath, "w") as file:
         yaml.dump(input_dict, file)
-    LOGGER.info(f"Saved dictionary at {path}.")
+    LOGGER.info(f"Saved config at {filepath}")
 
 
-def check_and_create_dir(directory: str) -> bool:
-    exist = os.path.isdir(directory)
-    LOGGER.debug(f"{directory} exists: {exist}")
+def check_and_create_dir(dirpath: str) -> bool:
+    exist = os.path.isdir(dirpath)
+    LOGGER.debug(f"{dirpath} exists: {exist}")
     if not exist:
-        LOGGER.info(f"{directory} does not exist, creating one.")
-        os.mkdir(directory)
+        LOGGER.info(f"{dirpath} does not exist, creating one.")
+        os.mkdir(dirpath)
     return exist

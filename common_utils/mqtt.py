@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from overrides import overrides
 
 from .logger import get_logger
-from .common import read_content_from_yml
+from .common import load_yml
 
-LOGGER = get_logger(logger_name="Common Utils | MQTT")
+LOGGER = get_logger("common_utils/mqtt")
 
 
 def load_broker_config() -> dict:
-    return read_content_from_yml(path="./configs/common/mqtt_broker.yml")
+    return load_yml("./configs/common/mqtt_broker.yml")
 
 
 class Broker:
