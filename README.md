@@ -54,7 +54,7 @@ make start
 make build
 
 # Start containers
-mode=prod make start
+make start MODE=prod
 ```
 
 ---
