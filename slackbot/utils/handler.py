@@ -31,7 +31,7 @@ class SlackMessageHandler:
         self.privilege_user_id = privilege_user_id
         self.commandExector = SlackCommandExector(web_client, publisher)
         self.subscriber = subscriber
-        self.subscriber.handlers.append(MQTTHandler(command_exector=self.commandExector))
+        self.subscriber.handlers.append(MQTTHandler(self.commandExector))
         Thread(target=self.subscriber.start, daemon=True).start()
         LOGGER.debug("Initialized Slackbot Command Exector.")
 
@@ -74,4 +74,4 @@ class SlackMessageHandler:
             )
 
     def start_analysis(self) -> None:
-        self.commandExector.analyze(text="analyze", user=None, channel=None)
+        self.commandExector.analyze("analyze", None, None)

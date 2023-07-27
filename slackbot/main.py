@@ -15,15 +15,12 @@ MODE = os.getenv("MODE")
 
 
 def main():
-    LOGGER.info("Initializing slackbot components...")
     app = App(token=os.getenv("SLACK_TOKEN"))
     slack_user_id = os.getenv("SLACK_USER_ID")
     web_client = WebClient(token=os.getenv("SLACK_TOKEN"), logger=LOGGER)
-    subscriber = Subscriber(client_id="slackbot-sub", broker=Broker(), topic="stats-analyzer-pub", handlers=[])
-    publisher = Publisher(client_id="slackbot-pub", broker=Broker())
-    handler = SlackMessageHandler(
-        web_client=web_client, privilege_user_id=slack_user_id, publisher=publisher, subscriber=subscriber
-    )
+    subscriber = Subscriber("slackbot-sub", Broker(), "stats-analyzer-pub", [])
+    publisher = Publisher("slackbot-pub", Broker())
+    handler = SlackMessageHandler(web_client, slack_user_id, publisher, subscriber)
     LOGGER.info("Initialized slack components.")
 
     @app.event("message")

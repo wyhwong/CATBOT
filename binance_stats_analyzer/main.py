@@ -13,15 +13,13 @@ MODE = os.getenv("MODE")
 
 
 def main() -> None:
-    publisher = Publisher(client_id="stats-analyzer-pub", broker=Broker())
+    publisher = Publisher("stats-analyzer-pub", Broker())
     binance_api_key = os.getenv("BINANCE_API_KEY")
     binance_api_secret = os.getenv("BINANCE_API_SECRET")
-    binance_api = BinanceClient(api_key=binance_api_key, api_secret=binance_api_secret)
+    binance_api = BinanceClient(binance_api_key, binance_api_secret)
     stats_analyzer = StatisticalAnalyzer()
-    handler = Handler(binance_api=binance_api, stats_analyzer=stats_analyzer, publisher=publisher)
-    subscriber = Subscriber(
-        client_id="stats-analyzer-sub", broker=Broker(), topic="text-analyzer-pub", handlers=[handler]
-    )
+    handler = Handler(binance_api, stats_analyzer, publisher)
+    subscriber = Subscriber("stats-analyzer-sub", Broker(), "text-analyzer-pub", [handler])
     subscriber.start()
 
 

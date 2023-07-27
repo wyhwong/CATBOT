@@ -1,10 +1,10 @@
 version: "3.8"
 
-x-env:
-  # Analyzer
-  &env
+x-env: &env
   - LOGLEVEL=${LOGLEVEL}
   - MODE=${MODE}
+
+  # Analyzer
   - ANALYSIS_INTERVAL_IN_SECOND=${ANALYSIS_INTERVAL_IN_SECOND}
   - ANALYSIS_WAITTIME=${ANALYSIS_WAITTIME}
   - TEXT_INFERENCE_PRETRAINED=${TEXT_INFERENCE_PRETRAINED}
@@ -32,61 +32,57 @@ x-env:
 x-data-dir: &data-dir ${DATA_DIR}:/data
 x-common-utils-dir: &common-utils-dir ./common_utils:/home/${USERNAME}/app/common_utils:ro
 x-configs-dir: &configs-dir ./configs/:/home/${USERNAME}/app/configs:ro
+x-restart-policy: &restart on-failure:2
 
-x-build-args: &build-args
-  USERNAME: ${USERNAME}
-  USER_ID: ${USER_ID}
-  GROUP_ID: ${GROUP_ID}
-  TZ: ${TZ}
+build-args: &build-args
+  context: ./
+  args:
+    USERNAME: ${USERNAME}
+    USER_ID: ${USER_ID}
+    GROUP_ID: ${GROUP_ID}
+    TZ: ${TZ}
 
 services:
   slackbot:
     image: catbot:${VERSION}
     hostname: slackbot
     container_name: slackbot
-    build:
-      context: ./
-      args: *build-args
+    build: *build-args
     volumes:
       - ./slackbot:/home/${USERNAME}/app
       - *configs-dir
       - *common-utils-dir
       - *data-dir
     environment: *env
-    restart: on-failure:2
+    restart: *restart
     command: python3 main.py
 
   binance_stats_analyzer:
     image: catbot:${VERSION}
     hostname: binance_stats_analyzer
     container_name: binance_stats_analyzer
-    build:
-      context: ./
-      args: *build-args
+    build: *build-args
     volumes:
       - ./binance_stats_analyzer:/home/${USERNAME}/app
       - *configs-dir
       - *common-utils-dir
       - *data-dir
     environment: *env
-    restart: on-failure:2
+    restart: *restart
     command: python3 main.py
 
   text_analyzer:
     image: catbot:${VERSION}
     hostname: text_analyzer
     container_name: text_analyzer
-    build:
-      context: ./
-      dockerfile: ./text_analyzer/Dockerfile
-      args: *build-args
+    build: *build-args
     volumes:
       - ./text_analyzer:/home/${USERNAME}/app
       - *configs-dir
       - *common-utils-dir
       - *data-dir
     environment: *env
-    restart: on-failure:2
+    restart: *restart
     command: python3 main.py
 
   mosquitto:

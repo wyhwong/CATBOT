@@ -67,51 +67,51 @@ class SlackCommandExector:
     def help(self, text: str, user: str, channel: str) -> None:
         if text == "help":
             LOGGER.info(f"Sending help message, channel: {channel}")
-            self._post_message(text=self._prepare_help_message(), channel=channel)
+            self._post_message(self._prepare_help_message(), channel)
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
-            self._post_message(text='Invalid command, do you mean "help"?', channel=channel)
+            self._post_message('Invalid command, do you mean "help"?', channel)
 
     def set_log(self, text: str, user: str, channel: str) -> None:
         LOGGER.info(f"Set channel for logging: from {self.log_channel} to {channel}...")
         self.log_channel = channel
-        self._post_message(text="Set this channel for logging.", channel=channel)
+        self._post_message("Set this channel for logging.", channel)
 
     def unset_log(self, text: str, user: str, channel: str) -> None:
         LOGGER.info(f"Unset channel for logging: {self.log_channel=}...")
         if text == "unset" and channel == self.log_channel:
             self.log_channel = None
-            self._post_message(text="Unset this channel for logging.", channel=channel)
+            self._post_message("Unset this channel for logging.", channel)
 
     def target(self, text: str, user: str, channel: str) -> None:
         targets = text.upper().split(" ")[1:]
         if len(targets) == 0:
             message = "Target is not specified, ignored the target command."
-            self._post_message(text=message, channel=channel)
+            self._post_message(message, channel)
             return
         LOGGER.info("Updating targeted cryptocurrencies...")
         for target in targets:
             if target not in self.supported_targets:
                 message = f"The target ({target}) is not supported, skipped."
-                self._post_message(text=message, channel=channel)
+                self._post_message(message, channel)
             elif target in self.targets:
                 message = f"The target ({target}) is already in targets, skipped."
             else:
                 self.targets.append(target)
                 LOGGER.info(f"Added {target} to targets.")
         message = f"Targets updated, {self.targets}."
-        self._post_message(text=message, channel=channel)
+        self._post_message(message, channel)
 
     def list_targets(self, text: str, user: str, channel: str) -> None:
         if text == "list_targets" and self.targets:
             message = f"Current targets: {self.targets}."
-            self._post_message(text=message, channel=channel)
+            self._post_message(message, channel)
         elif text == "list_targets":
             message = "Currently there are no targets."
-            self._post_message(text=message, channel=channel)
+            self._post_message(message, channel)
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
-            self._post_message(text='Invalid command, do you mean "list_targets"?', channel=channel)
+            self._post_message('Invalid command, do you mean "list_targets"?', channel)
 
     def untarget(self, text: str, user: str, channel: str) -> None:
         untargets = text.upper().split(" ")[1:]
@@ -120,10 +120,10 @@ class SlackCommandExector:
                 self.targets.remove(untarget)
             else:
                 message = f"The untarget ({untarget}) is not in self.targets, skipped."
-                self._post_message(text=message, channel=channel)
+                self._post_message(message, channel)
 
         message = f"Targets updated, {self.targets}."
-        self._post_message(text=message, channel=channel)
+        self._post_message(message, channel)
 
     def analyze(self, text: str, user: str, channel: str) -> None:
         if text == "analyze":
@@ -132,29 +132,29 @@ class SlackCommandExector:
             for target in self.targets:
                 target_scores[target] = {}
             message = str({"scores": target_scores})
-            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
-            self.publisher.publish(message=mqtt_message)
+            mqtt_message = MQTTMessage.from_str("slackbot-pub", message)
+            self.publisher.publish(mqtt_message)
             self.last_analysis_time = pd.Timestamp.now()
         else:
             LOGGER.info(f"Invalid command, send ask message, channel: {channel}")
-            self._post_message(text='Invalid command, do you mean "analyze"?', channel=channel)
+            self._post_message('Invalid command, do you mean "analyze"?', channel)
 
     def t_analyze(self, text: str, user: str, channel: str) -> None:
         if not self.log_channel:
             LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
             self.log_channel = channel
-            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
+            self._post_message("Log channel not set, set this channel for logging.", channel)
         keywords = text.split(" ")[1:]
         LOGGER.info(f"Starting text analysis for {keywords=}")
         message = str({"tcommand": "keywords_analysis", "args": {"keywords": keywords}})
-        mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
-        self.publisher.publish(message=mqtt_message)
+        mqtt_message = MQTTMessage.from_str("slackbot-pub", message)
+        self.publisher.publish(mqtt_message)
 
     def s_show_klines(self, text: str, user: str, channel: str) -> None:
         if not self.log_channel:
             LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
             self.log_channel = channel
-            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
+            self._post_message("Log channel not set, set this channel for logging.", channel)
         args = text.split(" ")[1:]
         if len(args) != 3:
             message = "Wrong command format, please check help."
@@ -169,19 +169,19 @@ class SlackCommandExector:
             message = "Type of duration should be float / Value in interval should be integer."
         finally:
             if message:
-                self._post_message(text=message, channel=channel)
+                self._post_message(message, channel)
             else:
                 message = str(
                     {"scommand": "show_klines", "args": {"target": target, "duration": duration, "interval": interval}}
                 )
-                mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
-                self.publisher.publish(message=mqtt_message)
+                mqtt_message = MQTTMessage.from_str("slackbot-pub", message)
+                self.publisher.publish(mqtt_message)
 
     def s_show_last_predict(self, text: str, user: str, channel: str) -> None:
         if not self.log_channel:
             LOGGER.info(f"Log channel not set, set channel for logging: from {self.log_channel} to {channel}...")
             self.log_channel = channel
-            self._post_message(text="Log channel not set, set this channel for logging.", channel=channel)
+            self._post_message("Log channel not set, set this channel for logging.", channel)
         args = text.split(" ")[1:]
         message = None
         if len(args) != 1:
@@ -189,18 +189,16 @@ class SlackCommandExector:
         if args[0].upper() not in self.targets:
             message = f"Not able to show, target {args[0].upper()} is not in list of targets."
         if message:
-            self._post_message(text=message, channel=channel)
+            self._post_message(message, channel)
         else:
             message = str({"scommand": "show_last_predict", "args": {"target": args[0].upper()}})
-            mqtt_message = MQTTMessage.from_str(topic="slackbot-pub", message=message)
-            self.publisher.publish(message=mqtt_message)
+            mqtt_message = MQTTMessage.from_str("slackbot-pub", message)
+            self.publisher.publish(mqtt_message)
 
     def post(self, command_args: dict) -> None:
         posttype = command_args.get("type", None)
         if posttype in ["csv", "png"]:
-            self._post_attachment(
-                title="User requested analysis results", file=command_args.get("path", None), channel=self.log_channel
-            )
+            self._post_attachment("User requested analysis results", command_args.get("path", None), self.log_channel)
 
     def log_scores(self, scores: dict) -> None:
         LOGGER.info(f"Logging scores to Slack channel: {scores}...")
@@ -211,4 +209,4 @@ class SlackCommandExector:
                 message += f" {analyzer}: {score:.3f} |"
         LOGGER.info(message)
         if self.log_channel:
-            self._post_message(text=message, channel=self.log_channel)
+            self._post_message(message, self.log_channel)

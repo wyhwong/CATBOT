@@ -42,9 +42,9 @@ class StatisticalAnalyzer:
         forecast, forecast_avg_max, forecast_avg_min = {}, 0.0, 0.0
         for model in self.models:
             if model == "LSTM":
-                price_max, price_min, time_series = self.transform_price_dataframe(dataframe=price_df, normalize=True)
+                price_max, price_min, time_series = self.transform_price_dataframe(price_df, normalize=True)
             else:
-                price_max, price_min, time_series = self.transform_price_dataframe(dataframe=price_df)
+                price_max, price_min, time_series = self.transform_price_dataframe(price_df)
             getattr(self, f"model_{model}").fit(series=time_series)
             forecast[model] = getattr(self, f"model_{model}").predict(n=30).values()
             model_forecast_avg_max = forecast[model].max()

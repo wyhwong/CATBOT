@@ -1,15 +1,13 @@
 FROM python:3.11-slim-buster
 
 RUN python3 -m pip install --upgrade pip
-# For Slackbot
-RUN pip3 install paho-mqtt pyyaml overrides slack_bolt pandas
 
-# For Binance Stats Analyzer
-RUN pip3 install python-binance darts seaborn matplotlib
-RUN pip3 install --upgrade mplfinance
-
-# For Text Analyzer
-RUN pip3 install torch transformers requests bs4 tweepy praw p_tqdm
+# For common utils, slackbot, stats analyzer, text analyzer
+RUN pip3 install paho-mqtt pyyaml overrides && \
+    pip3 install slack_bolt pandas && \
+    pip3 install python-binance darts seaborn matplotlib && \
+    pip3 install --upgrade mplfinance && \
+    pip3 install torch transformers requests bs4 tweepy praw p_tqdm
 
 ARG USERNAME
 ARG USER_ID

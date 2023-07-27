@@ -4,13 +4,12 @@ export USERNAME?=$(shell whoami)
 export USER_ID?=$(shell id -u)
 export GROUP_ID?=$(shell id -g)
 export TZ?=Asia/Hong_Kong
-
 export MODE?=dev
 export DATA_DIR?=./data
 export VERSION?=devel
+export LOGLEVEL?=20
 
 # Analyzer
-export LOGLEVEL?=20
 export ANALYSIS_INTERVAL_IN_SECOND?=300
 export ANALYSIS_WAITTIME?=30
 export TEXT_INFERENCE_PRETRAINED?=
@@ -36,6 +35,7 @@ export TWEEPY_ACCESS_TOKEN?=
 export TWEEPY_ACCESS_TOKEN_SECRET?=
 
 build:
+	mkdir -p ${DATA_DIR}
 	docker-compose build
 
 start:

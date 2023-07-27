@@ -9,17 +9,14 @@ LOGGER = get_logger("statistical_analyzer/utils/binance_client")
 
 class BinanceClient:
     def __init__(self, api_key: str, api_secret: str) -> None:
-        LOGGER.debug("Initializing Binance client...")
-        self.client = Client(api_key=api_key, api_secret=api_secret)
+        self.client = Client(api_key, api_secret)
         config = get_analyzer_config()
         self.interval = config["interval"]
         self.duration_in_days = config["duration_in_days"]
         LOGGER.info("Initialized Binance client...")
 
     def _get_historical_data(self, symbol: str, start_str: str, interval: str):
-        dataframe = pd.DataFrame(
-            self.client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_str)
-        ).astype(float)
+        dataframe = pd.DataFrame(self.client.get_historical_klines(symbol, interval, start_str)).astype(float)
         dataframe.columns = [
             "OpenTime",
             "Open",
@@ -45,11 +42,11 @@ class BinanceClient:
         return dataframe[["OpenTime", "Open", "High", "Low", "Close", "Volume"]]
 
     def get_number_of_trade(self, symbol: str, start_str: str, interval: str) -> pd.DataFrame:
-        dataframe = self._get_historical_data(symbol=symbol, start_str=start_str, interval=interval)
+        dataframe = self._get_historical_data(symbol, start_str, interval)
         return dataframe[["OpenTime", "NumberOfTrades"]]
 
     def get_price(self, symbol: str, start_str: str, interval: str) -> pd.DataFrame:
-        dataframe = self._get_historical_data(symbol=symbol, start_str=start_str, interval=interval)
+        dataframe = self._get_historical_data(symbol, start_str, interval)
         dataframe = dataframe[["OpenTime", "Open"]]
         dataframe.columns = ["Time", "Price"]
         return dataframe
@@ -59,6 +56,5 @@ class BinanceClient:
         start_str = (pd.Timestamp.now() - pd.Timedelta(days=self.duration_in_days)).strftime("%Y-%m-%d' %H:%M:%S")
         LOGGER.info(f"Querying data from Binance, {start_str=}, {targets=}...")
         for target in targets:
-            price_dataframes[target] = self.get_price(symbol=target, start_str=start_str, interval=self.interval)
-            LOGGER.info(f"Queried data of {target} from Binance.")
+            price_dataframes[target] = self.get_price(target, start_str, self.interval)
         return price_dataframes
