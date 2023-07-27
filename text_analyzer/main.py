@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 
+from time import sleep
+
 from utils.handler import Handler
 from utils.news_scraper import NewsScraper
 from utils.social_media_scraper import RedditScraper, TwitterScraper
@@ -9,6 +11,7 @@ from common_utils.logger import get_logger
 from common_utils.mqtt import Subscriber, Publisher, Broker
 
 LOGGER = get_logger("Text Analyzer")
+MODE = os.getenv("MODE")
 
 
 def main() -> None:
@@ -53,4 +56,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if MODE != "prod":
+        LOGGER.info(f"Running in non-prod mode {MODE}, Sleep forever...")
+        while True:
+            sleep(60)
     main()

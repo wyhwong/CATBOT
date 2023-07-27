@@ -11,6 +11,7 @@ from common_utils.common import get_logger
 from utils.handler import SlackMessageHandler
 
 LOGGER = get_logger("Slackbot")
+MODE = os.getenv("MODE")
 
 
 def main():
@@ -40,4 +41,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if MODE != "prod":
+        LOGGER.info(f"Running in non-prod mode {MODE}, Sleep forever...")
+        while True:
+            sleep(60)
     main()

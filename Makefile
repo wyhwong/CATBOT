@@ -40,7 +40,7 @@ build:
 
 start:
 	@echo "Running in ${MODE} mode"
-	docker-compose -f docker-compose.yml -f docker-compose-${MODE}.yml up -d
+	docker-compose up -d
 
 clean:
-	docker-compose -f docker-compose.yml down --remove-orphans
+	docker-compose down --remove-orphans

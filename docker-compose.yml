@@ -4,6 +4,7 @@ x-env:
   # Analyzer
   &env
   - LOGLEVEL=${LOGLEVEL}
+  - MODE=${MODE}
   - ANALYSIS_INTERVAL_IN_SECOND=${ANALYSIS_INTERVAL_IN_SECOND}
   - ANALYSIS_WAITTIME=${ANALYSIS_WAITTIME}
   - TEXT_INFERENCE_PRETRAINED=${TEXT_INFERENCE_PRETRAINED}
@@ -29,6 +30,8 @@ x-env:
   - TWEEPY_ACCESS_TOKEN_SECRET=${TWEEPY_ACCESS_TOKEN_SECRET}
 
 x-data-dir: &data-dir ${DATA_DIR}:/data
+x-common-utils-dir: &common-utils-dir ./common_utils:/home/${USERNAME}/app/common_utils:ro
+x-configs-dir: &configs-dir ./configs/:/home/${USERNAME}/app/configs:ro
 
 x-build-args: &build-args
   USERNAME: ${USERNAME}
@@ -38,33 +41,39 @@ x-build-args: &build-args
 
 services:
   slackbot:
-    image: catbot.slackbot:${VERSION}
+    image: catbot:${VERSION}
     hostname: slackbot
     container_name: slackbot
     build:
       context: ./
-      dockerfile: ./slackbot/Dockerfile
       args: *build-args
     volumes:
+      - ./slackbot:/home/${USERNAME}/app
+      - *configs-dir
+      - *common-utils-dir
       - *data-dir
     environment: *env
     restart: on-failure:2
+    command: python3 main.py
 
   binance_stats_analyzer:
-    image: catbot.binance_stats_analyzer:${VERSION}
+    image: catbot:${VERSION}
     hostname: binance_stats_analyzer
     container_name: binance_stats_analyzer
     build:
       context: ./
-      dockerfile: ./binance_stats_analyzer/Dockerfile
       args: *build-args
     volumes:
+      - ./binance_stats_analyzer:/home/${USERNAME}/app
+      - *configs-dir
+      - *common-utils-dir
       - *data-dir
     environment: *env
     restart: on-failure:2
+    command: python3 main.py
 
   text_analyzer:
-    image: catbot.text_analyzer:${VERSION}
+    image: catbot:${VERSION}
     hostname: text_analyzer
     container_name: text_analyzer
     build:
@@ -72,9 +81,13 @@ services:
       dockerfile: ./text_analyzer/Dockerfile
       args: *build-args
     volumes:
+      - ./text_analyzer:/home/${USERNAME}/app
+      - *configs-dir
+      - *common-utils-dir
       - *data-dir
     environment: *env
     restart: on-failure:2
+    command: python3 main.py
 
   mosquitto:
     image: eclipse-mosquitto
