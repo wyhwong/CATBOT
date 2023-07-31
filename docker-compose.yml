@@ -1,6 +1,7 @@
 version: "3.8"
 
-x-env: &env
+x-env:
+  &env
   - LOGLEVEL=${LOGLEVEL}
   - MODE=${MODE}
 
@@ -34,7 +35,8 @@ x-common-utils-dir: &common-utils-dir ./common_utils:/home/${USERNAME}/app/commo
 x-configs-dir: &configs-dir ./configs/:/home/${USERNAME}/app/configs:ro
 x-restart-policy: &restart on-failure:2
 
-build-args: &build-args
+x-build-args:
+  &build-args
   context: ./
   args:
     USERNAME: ${USERNAME}
