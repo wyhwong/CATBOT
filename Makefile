@@ -6,7 +6,7 @@ export GROUP_ID?=$(shell id -g)
 export TZ?=Asia/Hong_Kong
 export MODE?=dev
 export DATA_DIR?=./data
-export VERSION?=devel
+export VERSION?=1.0.0
 export LOGLEVEL?=20
 
 # Analyzer

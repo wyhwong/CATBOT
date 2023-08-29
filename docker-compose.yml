@@ -95,4 +95,4 @@ services:
       - ./mqtt-broker/:/mosquitto/
     ports:
       - 1883:1883
-    restart: on-failure:2
+    restart: *restart
