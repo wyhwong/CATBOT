@@ -10,5 +10,7 @@ class Handler:
 
 if __name__ == "__main__":
     handler = Handler()
-    subscriber = Subscriber(client_id="test-sub", broker=Broker(), topic="testing", handlers=[handler])
+    subscriber = Subscriber(
+        client_id="test-sub", broker=Broker(), topic="testing", handlers=[handler]
+    )
     subscriber.start()

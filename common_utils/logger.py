@@ -8,6 +8,15 @@ logging.basicConfig(format=LOGFMT, datefmt=DATEFMT, level=LOGLEVEL)
 
 
 def get_logger(logger_name: str, log_filepath=None) -> logging.Logger:
+    """
+    Get logger.
+
+    Args:
+        logger_name (str): Name of the logger.
+        log_filepath (str): Filepath of the log file.
+    Returns:
+        Logger (logging.Logger).
+    """
     logger = logging.getLogger(logger_name)
     logger.setLevel(LOGLEVEL)
     if log_filepath:

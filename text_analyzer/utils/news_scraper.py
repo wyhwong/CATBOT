@@ -11,12 +11,32 @@ LOGGER = get_logger("text_analyzer/utils/news_scraper")
 
 
 def _get_news_web_urls() -> dict:
+    """
+    Get news web urls.
+
+    Args:
+        None.
+    Returns:
+        News web urls (dict).
+    """
     return load_yml("./configs/text_analyzer/web_urls.yml")
 
 
 class NewsScraper(TextScraper):
+    """
+    News Scraper.
+    """
+
     @overrides
     def __init__(self) -> None:
+        """
+        Initialize News Scraper.
+
+        Args:
+            None.
+        Returns:
+            None.
+        """
         LOGGER.debug("Initializing News Scraper...")
         self.web_urls = _get_news_web_urls()
         self.keywords = _get_keywords()
@@ -24,6 +44,14 @@ class NewsScraper(TextScraper):
 
     @overrides
     def scrape(self, keywords: list = None) -> list:
+        """
+        Scrape news.
+
+        Args:
+            keywords (list): Keywords to filter the prompts.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for website, web_url in self.web_urls.items():
             LOGGER.info(f"Scraping {website}: {web_url}...")
@@ -49,10 +77,26 @@ class NewsScraper(TextScraper):
 
     @overrides
     def scrape_targets(self, targets: list) -> list:
+        """
+        Scrape news of the targets.
+
+        Args:
+            targets (list): Targets to filter the prompts.
+        Returns:
+            Prompts (list).
+        """
         prompts = self.scrape(keywords=None)
         return self._filter_prompts_with_keywords(targets=targets, prompts=prompts)
 
     def _scrape_investing(self, content) -> list:
+        """
+        Scrape investing.com.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("a"):
             title = element.get("title")
@@ -60,6 +104,14 @@ class NewsScraper(TextScraper):
         return prompts
 
     def _scrape_tradingview(self, content) -> list:
+        """
+        Scrape tradingview.com.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("a"):
             try:
@@ -71,6 +123,14 @@ class NewsScraper(TextScraper):
         return prompts
 
     def _scrape_coindesk(self, content) -> list:
+        """
+        Scrape coindesk.com.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("a"):
             title = element.get("title")
@@ -78,6 +138,14 @@ class NewsScraper(TextScraper):
         return prompts
 
     def _scrape_decrypt(self, content) -> list:
+        """
+        Scrape decrypt.co.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("h4"):
             try:
@@ -89,6 +157,14 @@ class NewsScraper(TextScraper):
         return prompts
 
     def _scrape_coinmarketcap(self, content) -> list:
+        """
+        Scrape coinmarketcap.com.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("a"):
             try:
@@ -100,6 +176,14 @@ class NewsScraper(TextScraper):
         return prompts
 
     def _scrape_nytimes(self, content) -> list:
+        """
+        Scrape nytimes.com.
+
+        Args:
+            content (BeautifulSoup): Content of the web page.
+        Returns:
+            Prompts (list).
+        """
         prompts = []
         for element in content.find_all("h2"):
             try:

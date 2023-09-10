@@ -19,7 +19,9 @@ def main() -> None:
     binance_api = BinanceClient(binance_api_key, binance_api_secret)
     stats_analyzer = StatisticalAnalyzer()
     handler = Handler(binance_api, stats_analyzer, publisher)
-    subscriber = Subscriber("stats-analyzer-sub", Broker(), "text-analyzer-pub", [handler])
+    subscriber = Subscriber(
+        "stats-analyzer-sub", Broker(), "text-analyzer-pub", [handler]
+    )
     subscriber.start()
 
 

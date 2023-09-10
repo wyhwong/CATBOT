@@ -7,6 +7,14 @@ LOGGER = get_logger("common_utils/common")
 
 
 def load_yml(filepath: str) -> dict:
+    """
+    Load yml file.
+
+    Args:
+        filepath (str): Filepath of the yml file.
+    Returns:
+        Content of the yml file (dict).
+    """
     LOGGER.debug(f"Read yml: {filepath}")
     with open(filepath, "r") as file:
         yml_content = yaml.load(file, Loader=yaml.SafeLoader)
@@ -14,12 +22,29 @@ def load_yml(filepath: str) -> dict:
 
 
 def save_dict_as_yml(filepath: str, input_dict: dict) -> None:
+    """
+    Save dict as yml file.
+
+    Args:
+        filepath (str): Filepath of the yml file.
+        input_dict (dict): Dict to be saved.
+    Returns:
+        None.
+    """
     with open(filepath, "w") as file:
         yaml.dump(input_dict, file)
     LOGGER.info(f"Saved config at {filepath}")
 
 
 def check_and_create_dir(dirpath: str) -> bool:
+    """
+    Check if the directory exists, if not, create one.
+
+    Args:
+        dirpath (str): Directory path.
+    Returns:
+        Whether the directory exists (bool).
+    """
     exist = os.path.isdir(dirpath)
     LOGGER.debug(f"{dirpath} exists: {exist}")
     if not exist:

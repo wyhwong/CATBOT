@@ -88,7 +88,7 @@ services:
     command: python3 main.py
 
   mosquitto:
-    image: eclipse-mosquitto
+    image: eclipse-mosquitto:2.0.17
     hostname: mosquitto
     container_name: mosquitto
     volumes:
